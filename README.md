@@ -1,5 +1,13 @@
 # E-commerce Customer Behavior Analysis
 
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-orange.svg)](https://scikit-learn.org)
+[![Pandas](https://img.shields.io/badge/pandas-Latest-green.svg)](https://pandas.pydata.org)
+[![NumPy](https://img.shields.io/badge/numpy-Latest-blue.svg)](https://numpy.org)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-Latest-yellow.svg)](https://matplotlib.org)
+[![Seaborn](https://img.shields.io/badge/seaborn-Latest-lightgrey.svg)](https://seaborn.pydata.org)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Latest-orange.svg)](https://jupyter.org)
+
 This project applies unsupervised machine learning techniques to analyze customer purchasing patterns and build a product recommendation system using real-world e-commerce transaction data.
 
 ## Project Overview
