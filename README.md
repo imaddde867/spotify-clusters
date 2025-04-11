@@ -1,78 +1,63 @@
-# E-commerce Customer Behavior Analysis
+### An unsupervised music recommendation system using Spotify track features
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-orange.svg)](https://scikit-learn.org)
-[![Pandas](https://img.shields.io/badge/pandas-Latest-green.svg)](https://pandas.pydata.org)
-[![NumPy](https://img.shields.io/badge/numpy-Latest-blue.svg)](https://numpy.org)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-Latest-yellow.svg)](https://matplotlib.org)
-[![Seaborn](https://img.shields.io/badge/seaborn-Latest-lightgrey.svg)](https://seaborn.pydata.org)
-[![Jupyter](https://img.shields.io/badge/Jupyter-Latest-orange.svg)](https://jupyter.org)
+## Overview
 
-This project applies unsupervised machine learning techniques to analyze customer purchasing patterns and build a product recommendation system using real-world e-commerce transaction data.
-
-## Project Overview
-
-The repository contains a comprehensive analysis of the "Online Retail" dataset from the UCI Machine Learning Repository, exploring customer segmentation and product associations through multiple unsupervised learning algorithms.
+`spotify-clusters` is a machine learning project that uses unsupervised learning techniques to analyze audio features from Spotify tracks, cluster similar songs together, and generate personalized music recommendations. The project explores advanced clustering algorithms beyond K-Means, dimensionality reduction techniques, and builds a practical recommendation system.
 
 ## Features
 
-- **Customer Segmentation** using multiple clustering techniques:
-  - K-Means Clustering
-  - Hierarchical Clustering
-  - DBSCAN
-  - Gaussian Mixture Models
+- Extract and analyze audio features from Spotify tracks
+- Visualize music in lower-dimensional space using PCA, t-SNE, and UMAP
+- Implement and compare multiple clustering algorithms (DBSCAN, Hierarchical Clustering, GMM)
+- Generate personalized music recommendations based on content similarity
+- Interactive visualizations of music clusters
 
-- **Dimensionality Reduction** for visualization and analysis:
-  - Principal Component Analysis (PCA)
-  - t-SNE
+## Getting Started
 
-- **Market Basket Analysis** using association rule mining
-
-- **Recommendation System** implementation:
-  - Collaborative Filtering
-  - Matrix Factorization
-
-## Dataset
-
-The project uses the [Online Retail Dataset](https://archive.ics.uci.edu/ml/datasets/Online+Retail), which contains actual transactions from a UK-based online retailer.
-
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/unsupervised-learning-ecommerce-analysis.git
-cd unsupervised-learning-ecommerce-analysis
-
-# Create and activate a virtual environment (optional)
-python -m venv venv
-source venv/bin/activate  # On Windows, use: venv\Scripts\activate
-
-# Install required packages
-pip install -r requirements.txt
-```
-
-## Usage
-
-The analysis is structured in Jupyter notebooks:
-
-1. `1_Data_Preprocessing.ipynb` - Data cleaning and feature engineering
-2. `2_Customer_Segmentation.ipynb` - Multiple clustering approaches
-3. `3_Dimensionality_Reduction.ipynb` - PCA and t-SNE analysis
-4. `4_Association_Rules.ipynb` - Market basket analysis
-5. `5_Recommendation_System.ipynb` - Building recommendation engines
-
-## Requirements
+### Prerequisites
 
 - Python 3.8+
 - scikit-learn
 - pandas
-- numpy
 - matplotlib
-- seaborn
-- mlxtend
-- scipy
-- jupyter
+- spotipy (Python library for Spotify Web API)
+- Your Spotify account credentials (for personal data)
+
+### Installation
+
+```bash
+git clone https://github.com/yourusername/spotify-clusters.git
+cd spotify-clusters
+pip install -r requirements.txt
+```
+
+### Quick Start
+
+1. Set up your Spotify API credentials
+2. Run data collection script to gather your music data
+3. Execute the clustering notebook to analyze your music
+4. Use the recommendation system to discover new songs
+
+## Project Structure
+
+- `data/` - Raw and processed data files
+- `notebooks/` - Jupyter notebooks for exploration and visualization
+- `src/` - Source code for the recommendation system
+- `results/` - Saved model outputs and visualizations
+
+## Next Steps
+
+- Implement additional clustering algorithms
+- Create a simple web interface for recommendations
+- Add collaborative filtering components
+- Extend to playlist generation
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT
+
+## Acknowledgments
+
+- Spotify Web API
+- scikit-learn documentation
+- "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
