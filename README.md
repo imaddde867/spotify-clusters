@@ -1,63 +1,117 @@
-### An unsupervised music recommendation system using Spotify track features
+# Unsupervised Music Recommendation System using Spotify Data
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-orange.svg)](https://scikit-learn.org)
+[![Pandas](https://img.shields.io/badge/pandas-Latest-green.svg)](https://pandas.pydata.org)
+[![NumPy](https://img.shields.io/badge/numpy-Latest-blue.svg)](https://numpy.org)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-Latest-yellow.svg)](https://matplotlib.org)
+[![Seaborn](https://img.shields.io/badge/seaborn-Latest-lightgrey.svg)](https://seaborn.pydata.org)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Latest-orange.svg)](https://jupyter.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-`spotify-clusters` is a machine learning project that uses unsupervised learning techniques to analyze audio features from Spotify tracks, cluster similar songs together, and generate personalized music recommendations. The project explores advanced clustering algorithms beyond K-Means, dimensionality reduction techniques, and builds a practical recommendation system.
+## 📋 Overview
 
-## Features
+This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music recommendations. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
+
+## 🔍 Key Objectives
 
 - Extract and analyze audio features from Spotify tracks
-- Visualize music in lower-dimensional space using PCA, t-SNE, and UMAP
-- Implement and compare multiple clustering algorithms (DBSCAN, Hierarchical Clustering, GMM)
-- Generate personalized music recommendations based on content similarity
-- Interactive visualizations of music clusters
+- Segment songs based on their audio characteristics
+- Discover hidden patterns in music data
+- Build a recommendation system for personalized music suggestions
+- Visualize complex relationships in high-dimensional audio data
 
-## Getting Started
+## 📊 Techniques Used
+
+- **Clustering Algorithms**:
+  - K-Means Clustering
+  - Hierarchical Clustering
+  - DBSCAN
+  - Gaussian Mixture Models
+
+- **Dimensionality Reduction**:
+  - Principal Component Analysis (PCA)
+  - t-Distributed Stochastic Neighbor Embedding (t-SNE)
+  - UMAP (Uniform Manifold Approximation and Projection)
+
+- **Recommendation Systems**:
+  - Content-Based Filtering
+  - Collaborative Filtering
+  - Matrix Factorization
+
+## 📂 Project Structure
+
+```
+.
+├── data/
+│   └── spotify_data.csv      # Music streaming dataset
+├── main.ipynb                # Jupyter notebook containing the analysis
+├── main.pdf                  # PDF version of the notebook
+├── README.md                 # This file
+└── LICENSE                   # MIT License
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Python 3.8+
-- scikit-learn
-- pandas
-- matplotlib
-- spotipy (Python library for Spotify Web API)
-- Your Spotify account credentials (for personal data)
+- Jupyter Notebook
 
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/spotify-clusters.git
-cd spotify-clusters
-pip install -r requirements.txt
+# Clone the repository
+git clone https://github.com/imaddde867/unsupervised-learning-ecommerce-analysis.git
+cd unsupervised-learning-ecommerce-analysis
+
+# Create and activate a virtual environment (optional)
+python -m venv venv
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+
+# Install required packages
+pip install jupyter pandas numpy matplotlib seaborn scikit-learn scipy spotipy
 ```
 
-### Quick Start
+### Usage
 
-1. Set up your Spotify API credentials
-2. Run data collection script to gather your music data
-3. Execute the clustering notebook to analyze your music
-4. Use the recommendation system to discover new songs
+Open and run the Jupyter notebook:
 
-## Project Structure
+```bash
+jupyter notebook main.ipynb
+```
 
-- `data/` - Raw and processed data files
-- `notebooks/` - Jupyter notebooks for exploration and visualization
-- `src/` - Source code for the recommendation system
-- `results/` - Saved model outputs and visualizations
+## 📈 Analysis Workflow
 
-## Next Steps
+1. **Data Preprocessing**: Cleaning the data, handling missing values, and feature engineering
+2. **Exploratory Data Analysis**: Understanding the distribution and relationships in audio features
+3. **Feature Extraction**: Analyzing and processing Spotify audio features
+4. **Dimensionality Reduction**: Using PCA, t-SNE, and UMAP for visualization and feature extraction
+5. **Clustering**: Applying multiple clustering algorithms to group similar songs
+6. **Recommendation System**: Building personalized music recommendation engines
+7. **Evaluation & Insights**: Interpreting results and extracting musical insights
 
-- Implement additional clustering algorithms
-- Create a simple web interface for recommendations
+## 🔄 Future Enhancements
+
+- Create an interactive web interface for recommendations
+- Implement playlist generation features
 - Add collaborative filtering components
-- Extend to playlist generation
+- Extend analysis to include user behavior patterns
 
-## License
+## 📝 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 👨‍💻 Author
+
+- [@imaddde867](https://github.com/imaddde867)
+
+## 🙏 Acknowledgments
 
 - Spotify Web API
 - scikit-learn documentation
 - "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
+
+---
+
+*Note: This project is part of a data science portfolio demonstrating unsupervised learning techniques in the context of music recommendation systems.*
