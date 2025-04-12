@@ -13,6 +13,8 @@
 
 This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music recommendations. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
 
+**[📄 View Complete Analysis (PDF)](main.pdf)** - View the detailed analysis and results without running the code.
+
 ## 🔍 Key Objectives
 
 - Extract and analyze audio features from Spotify tracks
@@ -46,7 +48,7 @@ This project applies advanced unsupervised machine learning techniques to analyz
 ├── data/
 │   └── spotify_data.csv      # Music streaming dataset
 ├── main.ipynb                # Jupyter notebook containing the analysis
-├── main.pdf                  # PDF version of the notebook
+├── main.pdf                  # PDF version of the notebook for easy viewing
 ├── README.md                 # This file
 └── LICENSE                   # MIT License
 ```
@@ -90,6 +92,8 @@ jupyter notebook main.ipynb
 5. **Clustering**: Applying multiple clustering algorithms to group similar songs
 6. **Recommendation System**: Building personalized music recommendation engines
 7. **Evaluation & Insights**: Interpreting results and extracting musical insights
+
+You can explore the complete analysis in the [main.pdf](main.pdf) document without needing to run any code.
 
 ## 🔄 Future Enhancements
 
