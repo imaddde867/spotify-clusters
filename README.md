@@ -111,7 +111,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Spotify Web API
 - scikit-learn documentation
 - "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
-
----
-
-*Note: This project is part of a data science portfolio demonstrating unsupervised learning techniques in the context of music recommendation systems.*
