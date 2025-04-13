@@ -11,7 +11,7 @@
 
 ## 📋 Overview
 
-This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
+This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences.
 
 **[📄 View Complete Analysis (PDF)](main.pdf)** • View the detailed analysis and results without running the code.
 
@@ -91,7 +91,7 @@ jupyter notebook main.ipynb
 4. **Dimensionality Reduction**: Using PCA, t-SNE, and UMAP for visualization and feature extraction
 5. **Clustering**: Applying multiple clustering algorithms to group similar songs
 6. **RECOMMENDATION System**: Building personalized music recommendation engines
-7. **Evaluation & Insights**: Interpreting results and extracting musical insights
+7. **Evaluation & Insights**: Interpreting results and extracting musical perspectives
 
 You can explore the complete analysis in the [main.pdf](main.pdf) document without needing to run any code.
 
