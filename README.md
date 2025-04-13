@@ -11,13 +11,13 @@
 
 ## 📋 Overview
 
-This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences.
+This project applies advanced unsupervised machine learning techniques to analyze Spotify track characteristics, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences.
 
 **[📄 View Complete Analysis (PDF)](main.pdf)** • View the detailed analysis and results without running the code.
 
 ## 🔍 Key Objectives
 
-• Extract and analyze audio features from Spotify tracks
+• Extract and analyze audio characteristics from Spotify tracks
 • Segment songs based on their audio characteristics
 • Discover hidden patterns in music data
 • Build a RECOMMENDATION system for personalized music suggestions
@@ -86,8 +86,8 @@ jupyter notebook main.ipynb
 ## 📈 Analysis Workflow
 
 1. **Data Preprocessing**: Cleaning the data, handling missing values, and feature engineering
-2. **Exploratory Data Analysis**: Understanding the distribution and relationships in audio features
-3. **Feature Extraction**: Analyzing and processing Spotify audio features
+2. **Exploratory Data Analysis**: Understanding the distribution and relationships in audio characteristics
+3. **Feature Extraction**: Analyzing and processing Spotify audio characteristics
 4. **Dimensionality Reduction**: Using PCA, t-SNE, and UMAP for visualization and feature extraction
 5. **Clustering**: Applying multiple clustering algorithms to group similar songs
 6. **RECOMMENDATION System**: Building personalized music recommendation engines
@@ -98,7 +98,7 @@ You can explore the complete analysis in the [main.pdf](main.pdf) document witho
 ## 🔄 Future Enhancements
 
 • Create an interactive web interface for RECOMMENDATIONs
-• Implement playlist generation features
+• Implement playlist generation characteristics
 • Add collaborative filtering components
 • Extend analysis to include user behavior patterns
 
