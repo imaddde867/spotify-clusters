@@ -1,19 +1,19 @@
 # Unsupervised Music RECOMMENDATION System using Spotify Data
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-orange.svg)](https://scikit-learn.org)
-[![Pandas](https://img.shields.io/badge/pandas-Latest-green.svg)](https://pandas.pydata.org)
-[![NumPy](https://img.shields.io/badge/numpy-Latest-blue.svg)](https://numpy.org)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-Latest-yellow.svg)](https://matplotlib.org)
-[![Seaborn](https://img.shields.io/badge/seaborn-Latest-lightgrey.svg)](https://seaborn.pydata.org)
-[![Jupyter](https://img.shields.io/badge/Jupyter-Latest-orange.svg)](https://jupyter.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[View Documentation](https://www.python.org)
+[View Documentation](https://scikit-learn.org)
+[View Documentation](https://pandas.pydata.org)
+[View Documentation](https://numpy.org)
+[View Documentation](https://matplotlib.org)
+[View Documentation](https://seaborn.pydata.org)
+[View Documentation](https://jupyter.org)
+[View Documentation](LICENSE)
 
 ## 📋 Overview
 
 This project applies advanced unsupervised machine learning techniques to analyze Spotify track characteristics, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences.
 
-**[📄 View Complete Analysis (PDF)](main.pdf)** • View the detailed analysis and results without running the code.
+**[View Documentation](main.pdf)** • View the detailed analysis and results without running the code.
 
 ## 🔍 Key Objectives
 
@@ -93,7 +93,7 @@ jupyter notebook main.ipynb
 6. **RECOMMENDATION System**: Building personalized music recommendation engines
 7.  **Evaluation & Insights**: Interpreting results and extracting musical perspectives
 
-You can explore the complete analysis in the [main.pdf](main.pdf) document without needing to run any code.
+You can explore the complete analysis in the [View Documentation](main.pdf) document without needing to run any code.
 
 ## 🔄 Future Enhancements
 
@@ -104,11 +104,11 @@ You can explore the complete analysis in the [main.pdf](main.pdf) document witho
 
 ## 📝 License
 
-This project is licensed under the MIT License • see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License • see the [View Documentation](LICENSE) file for details.
 
 ## 👨‍💻 Author
 
-• [@imaddde867](https://github.com/imaddde867)
+• [View Documentation](https://github.com/imaddde867)
 
 ## 🙏 Acknowledgments
 
