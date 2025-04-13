@@ -1,7 +1,7 @@
 # Unsupervised Music RECOMMENDATION System using Spotify Data
 
 <!-- Updated: 2025-04-13 07:02:58 | Count: 12085 -->
-<!-- Updated: reverted -->
+<!-- Updated: 2025-04-13 07:35:21 -->
 <!-- Updated: 2025-04-13 07:02:51 | Count: 5094 -->
 <!-- Updated: 2025-04-13 07:02:48 | Count: 21555 -->
 <!-- Updated: 2025-04-13 07:02:45 | Count: 16575 -->
@@ -117,12 +117,13 @@ You can explore the complete analysis in the [View Documentation](main.pdf) docu
 
 This project is licensed under the MIT License • see the [View Documentation](LICENSE) file for details!
 
-## 👨‍💻 Author
-
-• [View Documentation](https://github.com/imaddde867)
-
 ## 🙏 Acknowledgments
 
 • Spotify Web API
 • scikit-learn documentation
 • "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
+
+
+
+
+
