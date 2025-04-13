@@ -13,33 +13,33 @@
 
 This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music recommendations. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
 
-**[📄 View Complete Analysis (PDF)](main.pdf)** - View the detailed analysis and results without running the code.
+**[📄 View Complete Analysis (PDF)](main.pdf)** • View the detailed analysis and results without running the code.
 
 ## 🔍 Key Objectives
 
-- Extract and analyze audio features from Spotify tracks
-- Segment songs based on their audio characteristics
-- Discover hidden patterns in music data
-- Build a recommendation system for personalized music suggestions
-- Visualize complex relationships in high-dimensional audio data
+• Extract and analyze audio features from Spotify tracks
+• Segment songs based on their audio characteristics
+• Discover hidden patterns in music data
+• Build a recommendation system for personalized music suggestions
+• Visualize complex relationships in high-dimensional audio data
 
 ## 📊 Techniques Used
 
-- **Clustering Algorithms**:
-  - K-Means Clustering
-  - Hierarchical Clustering
-  - DBSCAN
-  - Gaussian Mixture Models
+• **Clustering Algorithms**:
+  • K-Means Clustering
+  • Hierarchical Clustering
+  • DBSCAN
+  • Gaussian Mixture Models
 
-- **Dimensionality Reduction**:
-  - Principal Component Analysis (PCA)
-  - t-Distributed Stochastic Neighbor Embedding (t-SNE)
-  - UMAP (Uniform Manifold Approximation and Projection)
+• **Dimensionality Reduction**:
+  • Principal Component Analysis (PCA)
+  • t-Distributed Stochastic Neighbor Embedding (t-SNE)
+  • UMAP (Uniform Manifold Approximation and Projection)
 
-- **Recommendation Systems**:
-  - Content-Based Filtering
-  - Collaborative Filtering
-  - Matrix Factorization
+• **Recommendation Systems**:
+  • Content-Based Filtering
+  • Collaborative Filtering
+  • Matrix Factorization
 
 ## 📂 Project Structure
 
@@ -57,8 +57,8 @@ This project applies advanced unsupervised machine learning techniques to analyz
 
 ### Prerequisites
 
-- Python 3.8+
-- Jupyter Notebook
+• Python 3.8+
+• Jupyter Notebook
 
 ### Installation
 
@@ -97,21 +97,21 @@ You can explore the complete analysis in the [main.pdf](main.pdf) document witho
 
 ## 🔄 Future Enhancements
 
-- Create an interactive web interface for recommendations
-- Implement playlist generation features
-- Add collaborative filtering components
-- Extend analysis to include user behavior patterns
+• Create an interactive web interface for recommendations
+• Implement playlist generation features
+• Add collaborative filtering components
+• Extend analysis to include user behavior patterns
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License • see the [LICENSE](LICENSE) file for details.
 
 ## 👨‍💻 Author
 
-- [@imaddde867](https://github.com/imaddde867)
+• [@imaddde867](https://github.com/imaddde867)
 
 ## 🙏 Acknowledgments
 
-- Spotify Web API
-- scikit-learn documentation
-- "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
+• Spotify Web API
+• scikit-learn documentation
+• "Hands-On Machine Learning with Scikit-Learn & TensorFlow"
