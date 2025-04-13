@@ -1,4 +1,4 @@
-# Unsupervised Music Recommendation System using Spotify Data
+# Unsupervised Music RECOMMENDATION System using Spotify Data
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-orange.svg)](https://scikit-learn.org)
@@ -11,7 +11,7 @@
 
 ## 📋 Overview
 
-This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music recommendations. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
+This project applies advanced unsupervised machine learning techniques to analyze Spotify track features, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable insights into music patterns and user preferences.
 
 **[📄 View Complete Analysis (PDF)](main.pdf)** • View the detailed analysis and results without running the code.
 
@@ -20,7 +20,7 @@ This project applies advanced unsupervised machine learning techniques to analyz
 • Extract and analyze audio features from Spotify tracks
 • Segment songs based on their audio characteristics
 • Discover hidden patterns in music data
-• Build a recommendation system for personalized music suggestions
+• Build a RECOMMENDATION system for personalized music suggestions
 • Visualize complex relationships in high-dimensional audio data
 
 ## 📊 Techniques Used
@@ -36,7 +36,7 @@ This project applies advanced unsupervised machine learning techniques to analyz
   • t-Distributed Stochastic Neighbor Embedding (t-SNE)
   • UMAP (Uniform Manifold Approximation and Projection)
 
-• **Recommendation Systems**:
+• **RECOMMENDATION Systems**:
   • Content-Based Filtering
   • Collaborative Filtering
   • Matrix Factorization
@@ -90,14 +90,14 @@ jupyter notebook main.ipynb
 3. **Feature Extraction**: Analyzing and processing Spotify audio features
 4. **Dimensionality Reduction**: Using PCA, t-SNE, and UMAP for visualization and feature extraction
 5. **Clustering**: Applying multiple clustering algorithms to group similar songs
-6. **Recommendation System**: Building personalized music recommendation engines
+6. **RECOMMENDATION System**: Building personalized music recommendation engines
 7. **Evaluation & Insights**: Interpreting results and extracting musical insights
 
 You can explore the complete analysis in the [main.pdf](main.pdf) document without needing to run any code.
 
 ## 🔄 Future Enhancements
 
-• Create an interactive web interface for recommendations
+• Create an interactive web interface for RECOMMENDATIONs
 • Implement playlist generation features
 • Add collaborative filtering components
 • Extend analysis to include user behavior patterns
