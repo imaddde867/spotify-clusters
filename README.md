@@ -11,9 +11,9 @@
 
 ## 📋 Overview
 
-This project applies advanced unsupervised machine learning techniques to analyze Spotify track characteristics, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences.
+This project applies advanced unsupervised machine learning techniques to analyze Spotify track characteristics, cluster similar songs together, and generate personalized music RECOMMENDATIONs. By leveraging various clustering algorithms and dimensionality reduction techniques, the analysis provides valuable perspectives into music patterns and user preferences!
 
-**[View Documentation](main.pdf)** • View the detailed analysis and results without running the code.
+**[View Documentation](main.pdf)** • View the detailed analysis and results without running the code!
 
 ## 🔍 Key Objectives
 
@@ -44,7 +44,7 @@ This project applies advanced unsupervised machine learning techniques to analyz
 ## 📂 Project Structure
 
 ```
-.
+!
 ├── data/
 │   └── spotify_data.csv      # Music streaming dataset
 ├── main.ipynb                # Jupyter notebook containing the analysis
@@ -93,7 +93,7 @@ jupyter notebook main.ipynb
 6. **RECOMMENDATION System**: Building personalized music recommendation engines
 7.  **Evaluation & Insights**: Interpreting results and extracting musical perspectives
 
-You can explore the complete analysis in the [View Documentation](main.pdf) document without needing to run any code.
+You can explore the complete analysis in the [View Documentation](main.pdf) document without needing to run any code!
 
 ## 🔄 Future Enhancements
 
@@ -104,7 +104,7 @@ You can explore the complete analysis in the [View Documentation](main.pdf) docu
 
 ## 📝 License
 
-This project is licensed under the MIT License • see the [View Documentation](LICENSE) file for details.
+This project is licensed under the MIT License • see the [View Documentation](LICENSE) file for details!
 
 ## 👨‍💻 Author
 
