@@ -91,7 +91,7 @@ jupyter notebook main.ipynb
 4. **Dimensionality Reduction**: Using PCA, t-SNE, and UMAP for visualization and feature extraction
 5. **Clustering**: Applying multiple clustering algorithms to group similar songs
 6. **RECOMMENDATION System**: Building personalized music recommendation engines
-7. **Evaluation & Insights**: Interpreting results and extracting musical perspectives
+7.  **Evaluation & Insights**: Interpreting results and extracting musical perspectives
 
 You can explore the complete analysis in the [main.pdf](main.pdf) document without needing to run any code.
 
