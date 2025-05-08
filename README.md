@@ -1,134 +1,138 @@
-# 🎵 Unsupervised Music Recommendation System Using Spotify Data
+# 🎵 Advanced Music Recommendation System
 
-A project that leverages **unsupervised machine learning** to analyze Spotify track features, cluster similar songs, and generate personalized music recommendations.
+![Music Recommendation System](https://img.shields.io/badge/Project-Music%20Recommendation-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Pandas](https://img.shields.io/badge/Pandas-Latest-blue)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Latest-blue)
+![Status](https://img.shields.io/badge/Status-Operational-success)
 
-📄 **[View Full Analysis (PDF)](main.pdf)** – Explore the complete results without running any code!
+## Project Overview
 
----
+This project implements a sophisticated music recommendation system using machine learning techniques on Spotify audio feature data. The system analyzes track characteristics and identifies similar songs based on audio features rather than traditional metadata approaches, allowing for the discovery of sonically similar tracks across diverse genres and artists.
 
-## 🔗 Useful Links
+## 📊 Data
 
-- [Python](https://www.python.org)  
-- [scikit-learn](https://scikit-learn.org)  
-- [Pandas](https://pandas.pydata.org)  
-- [NumPy](https://numpy.org)  
-- [Matplotlib](https://matplotlib.org)  
-- [Seaborn](https://seaborn.pydata.org)  
-- [Jupyter](https://jupyter.org)  
-- [License](LICENSE)
+The system leverages a comprehensive Spotify dataset containing over 1.1 million tracks with the following key features:
 
----
+- **Audio characteristics:** danceability, energy, key, loudness, mode, etc.
+- **Track metadata:** artist name, track name, track ID, genre, etc.
+- **Performance metrics:** popularity, duration, etc.
 
-## 📋 Overview
+## 🔬 Technical Approach
 
-This project applies unsupervised learning techniques to Spotify track data to identify song clusters and generate smart music recommendations. By combining **clustering algorithms**, **dimensionality reduction**, and **content-based filtering**, the system reveals hidden structures in musical data and suggests songs based on audio similarities.
+The recommendation engine employs a multi-stage machine learning pipeline:
 
----
+### 1. Data Preprocessing & Feature Engineering
 
-## 🎯 Objectives
+- **Initial cleaning:** Removed NAs and duplicates (1,159,764 → 1,159,748 records)
+- **Feature selection:** Focused on intrinsic audio characteristics
+- **Feature engineering:**
+  - Created composite features like `energy_to_acousticness_ratio` and `vocal_character`
+  - Developed music-specific components (`energy_dynamics`, `dance_rhythm`, `emotional_content`, etc.)
+- **Feature normalization:** Applied MinMax and StandardScaler transforms
 
-- Analyze and extract meaningful features from Spotify track data  
-- Group songs by audio characteristics using clustering techniques  
-- Visualize complex patterns in high-dimensional data  
-- Build a basic recommendation engine to suggest similar tracks  
-- Deliver an interpretable and visually engaging analysis  
+### 2. Dimensionality Reduction
 
----
+- **Principal Component Analysis (PCA):** Reduced feature space to 6 principal components while preserving 91.99% of variance
+- **3D visualization:** Mapped songs into a comprehensible 3D audio feature space
 
-## ⚙️ Techniques Used
+### 3. Clustering & Similarity Modeling
 
-### Clustering Algorithms
-- K-Means  
-- Hierarchical Clustering  
-- DBSCAN  
-- Gaussian Mixture Models (GMM)
+- **K-means clustering:** Identified optimal cluster count (35) using multiple evaluation metrics:
+  - Silhouette Score
+  - Davies-Bouldin Index
+  - Calinski-Harabasz Index
+- **Recommendation generation:** Combined cluster assignment with cosine similarity to identify most similar tracks
 
-### Dimensionality Reduction
-- Principal Component Analysis (PCA)  
-- t-SNE  
-- UMAP
+### 4. Performance Metrics
 
-### Recommendation Approaches
-- Content-Based Filtering  
-- Collaborative Filtering (planned)  
-- Matrix Factorization (planned)
+- Achieved Silhouette Score of 0.1667, indicating reasonable cluster separation given the complex audio feature space
+- Clear visual clustering in PCA-reduced dimensions
 
----
+## 🔧 Implementation Details
 
-## 📁 Project Structure
+The system incorporates several advanced techniques:
 
-```
-.
-├── data/
-│   └── spotify_data.csv        # Main dataset
-├── main.ipynb                  # Jupyter notebook with full analysis
-├── main.pdf                    # PDF version of the notebook
-├── README.md                   # Project README file
-└── LICENSE                     # MIT License
-```
+- **Correlation analysis:** Identified and addressed highly correlated features
+- **Feature importance analysis:** Used Random Forest to determine most influential audio characteristics
+- **Extensive hyperparameter optimization:** Determined optimal clusters through comprehensive evaluation
+- **Efficient large dataset handling:** Processing strategies for 1M+ records
 
----
+## 🚀 Usage
 
-## 🚀 Getting Started
+```python
+# Load recommendation model
+import pandas as pd
+df_pca = pd.read_pickle('df_pca.pkl')
+df_clean = pd.read_pickle('df_clean.pkl')
 
-### ✅ Prerequisites
+# Get recommendations for a track
+def recommend_songs(track_id, df_pca, df_clean, n_recommendations=5):
+    if track_id not in df_pca.index:
+        return "Track ID not found."
+    
+    cluster = df_pca.loc[track_id, 'cluster']
+    similar_songs = df_pca[df_pca['cluster'] == cluster].drop('cluster', axis=1)
+    
+    if len(similar_songs) <= 1:
+        return "Not enough songs in the same cluster."
+    
+    # Calculate cosine similarity
+    track_features = similar_songs.loc[track_id].values.reshape(1, -1)
+    similarities = cosine_similarity(track_features, similar_songs)[0]
+    
+    # Get top similar songs
+    similar_indices = similar_songs.index[np.argsort(similarities)[::-1][1:n_recommendations+1]]
+    recommendations = df_clean.loc[df_clean['track_id'].isin(similar_indices),
+                             ['track_id', 'track_name', 'artist_name', 'genre', 'popularity']]
+    
+    return recommendations
 
-- Python 3.8+
-- Jupyter Notebook
-
-### 💾 Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/imaddde867/unsupervised-learning-ecommerce-analysis.git
-cd unsupervised-learning-ecommerce-analysis
-
-# (Optional) Create and activate a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install required dependencies
-pip install jupyter pandas numpy matplotlib seaborn scikit-learn scipy spotipy
-```
-
-### ▶️ Run the Notebook
-
-```bash
-jupyter notebook main.ipynb
+# Example usage
+track_id = "0lOonb8Xn49VXJ1Ukb2vgh"  # Disturbed - "Enough"
+recommendations = recommend_songs(track_id, df_pca, df_clean)
 ```
 
----
+## 📈 Results & Visualizations
 
-## 📈 Analysis Workflow
+The system effectively groups songs with similar audio characteristics:
 
-1. **Data Preprocessing** – Cleaning and formatting the dataset  
-2. **Exploratory Data Analysis (EDA)** – Understanding trends and correlations  
-3. **Feature Engineering** – Extracting and refining audio features  
-4. **Dimensionality Reduction** – Visualizing patterns in lower dimensions  
-5. **Clustering** – Grouping similar songs using ML models  
-6. **Recommendation System** – Suggesting songs based on similarity  
-7. **Insights & Evaluation** – Interpreting results and findings  
+![Cluster Visualization](cluster_visualization.png)
 
----
+When presented with a metal track like Disturbed's "Enough", the system recommends other high-energy tracks with similar audio profiles across rock subgenres:
 
-## 🔮 Future Enhancements
+```
+Selected track: "Enough" by Disturbed
+Genre: metal
 
-- 🌐 Build an interactive web interface for recommendations  
-- 🎧 Auto-generate playlists based on user mood and song clusters  
-- 👥 Integrate collaborative filtering and user profiles  
-- 📊 Incorporate listening behavior for dynamic suggestions  
+Recommendations:
+- "Play My Game" by The Donnas (power-pop)
+- "Live And Let Die" by Bass Modulators (hardstyle)
+- "30/30-150" by Stone Sour (alt-rock)
+- "Sahara" by Relient K (alt-rock)
+- "Area 1" by All Ends (goth)
+```
 
----
+## 🔍 Future Enhancements
 
-## 📄 License
+- Hybrid recommendation approach combining audio features with collaborative filtering
+- Integration of lyrical content and sentiment analysis
+- Real-time recommendation API
+- User feedback mechanism to improve recommendations
+- Genre-specific models to capture nuanced differences within genres
 
-This project is licensed under the MIT License.  
-See the [LICENSE](LICENSE) file for more information.
+## 🛠️ Technologies Used
 
----
+- **Python** for core implementation
+- **Pandas** for data manipulation
+- **Scikit-learn** for machine learning components
+- **Seaborn/Matplotlib** for visualizations
+- **NumPy** for numerical operations
 
-## 🙌 Acknowledgments
+## 📚 References
 
-- Spotify Web API  
-- scikit-learn Documentation  
-- *Hands-On Machine Learning with Scikit-Learn & TensorFlow* by Aurélien Géron  
+This project builds on research in music information retrieval (MIR) and content-based recommendation systems:
+
+- Logan, B. (2004). Mel frequency cepstral coefficients for music modeling.
+- Schedl, M., Gómez, E., & Urbano, J. (2014). Music information retrieval: Recent developments and applications.
+- van den Oord, A., Dieleman, S., & Schrauwen, B. (2013). Deep content-based music recommendation.
