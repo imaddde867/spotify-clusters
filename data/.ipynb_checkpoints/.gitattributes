@@ -1,0 +1,5 @@
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+df_pca.pkl filter=lfs diff=lfs merge=lfs -text
+data/.ipynb_checkpoints/spotify_data-checkpoint.csv filter=lfs diff=lfs merge=lfs -text
+df_clean.pkl filter=lfs diff=lfs merge=lfs -text
