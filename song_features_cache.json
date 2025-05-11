@@ -1,18 +1,1 @@
-{
-  "Romantic Homicide|d4vd": {
-    "danceability": 0.36891302433174444,
-    "energy": 0.7040059398712217,
-    "key": 0,
-    "loudness": -1.9891781352718567,
-    "mode": 0,
-    "speechiness": 0.12544620342980753,
-    "acousticness": 0.7862201277237448,
-    "instrumentalness": 0.046003729954985195,
-    "liveness": 0.29564482489361255,
-    "valence": 0.578504902937367,
-    "tempo": 100.8530266256255,
-    "name": "Romantic Homicide",
-    "artist": "d4vd",
-    "album": "Romantic Homicide"
-  }
-}
+{"Romantic Homicide|d4vd": {"danceability": 0.36891302433174444, "energy": 0.7040059398712217, "key": 0, "loudness": -1.9891781352718567, "mode": 0, "speechiness": 0.12544620342980753, "acousticness": 0.7862201277237448, "instrumentalness": 0.046003729954985195, "liveness": 0.29564482489361255, "valence": 0.578504902937367, "tempo": 100.8530266256255, "name": "Romantic Homicide", "artist": "d4vd", "album": "Romantic Homicide"}, "small worlds|mac miller": {"danceability": 0.7, "energy": 0.6, "key": 0, "loudness": -7.0, "mode": 1, "speechiness": 0.1, "acousticness": 0.2, "instrumentalness": 0.01, "liveness": 0.15, "valence": 0.5, "tempo": 120, "name": "Small Worlds", "artist": "Mac Miller", "album": "Swimming", "release_date": "2018-08-03"}}
