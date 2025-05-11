@@ -1,0 +1,13 @@
+energy_to_acousticness_ratio
+danceability
+tempo
+valence
+speechiness
+instrumentalness
+liveness
+energy
+energy_dynamics
+dance_rhythm
+emotional_content
+vocal_presence
+performance_style
