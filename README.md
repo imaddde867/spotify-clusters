@@ -103,32 +103,70 @@ The project includes multiple advanced visualizations:
 - **Performance Optimization**: Multiprocessing for parallel computation
 - **Development Environment**: Jupyter Lab/Notebook
 
+## 🌐 Web Application
+
+**NEW!** This project now includes a professional web application that transforms the Jupyter notebook analysis into a user-friendly interface.
+
+### ✨ Web App Features
+- **🎵 Song Search**: Enter any song name with optional artist filtering
+- **🎯 AI Recommendations**: Get 5-20 similar tracks using ML clustering
+- **📱 Responsive Design**: Modern, mobile-friendly interface
+- **🔗 Spotify Integration**: Direct links to open tracks in Spotify
+- **⚡ Fast Performance**: Sub-3-second recommendation generation
+
+### 🚀 Quick Start (Web App)
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the web application
+python run_webapp.py
+
+# Open browser to http://localhost:5000
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Python 3.8+
-- Jupyter Notebook/Lab
-- Required libraries: pandas, numpy, scikit-learn, matplotlib, seaborn
+- Required libraries: Flask, pandas, numpy, scikit-learn, matplotlib, seaborn
 
-### Installation
+### Installation Options
 
+#### Option 1: Web Application (Recommended)
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/music-recommendation-system.git
 cd music-recommendation-system
 
+# Install dependencies
+pip install -r requirements.txt
+
+# Generate model files (run once)
+jupyter notebook main.ipynb  # Run all cells
+
+# Start web application
+python run_webapp.py
+```
+
+#### Option 2: Jupyter Notebook Analysis
+```bash
 # Create and activate virtual environment (recommended)
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install required dependencies
 pip install -r requirements.txt
+
+# Run the analysis
+jupyter notebook main.ipynb
 ```
 
-### Running the Analysis
-
+#### Option 3: Command Line Interface
 ```bash
-jupyter notebook main.ipynb
+# After installing dependencies and generating models
+python main.py
 ```
 
 ## 🔮 Future Enhancements

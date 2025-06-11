@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify AI Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                    <h1>Spotify AI</h1>
+                </div>
+                <div class="header-subtitle">
+                    AI-powered music recommendations from 1.1M+ tracks
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <h2 class="search-title">Find your next favorite song</h2>
+
+                    <form id="recommendationForm" class="search-form">
+                        <div class="input-group">
+                            <div class="input-field">
+                                <label for="songName">Song name</label>
+                                <input type="text" id="songName" name="song_name"
+                                       placeholder="Enter a song you love..." required>
+                            </div>
+
+                            <div class="input-field">
+                                <label for="artistName">Artist (optional)</label>
+                                <input type="text" id="artistName" name="artist_name"
+                                       placeholder="Artist name...">
+                            </div>
+                        </div>
+
+                        <div class="controls-group">
+                            <div class="playlist-size">
+                                <label for="playlistSize">Recommendations</label>
+                                <select id="playlistSize" name="playlist_size">
+                                    <option value="5">5 songs</option>
+                                    <option value="10" selected>10 songs</option>
+                                    <option value="15">15 songs</option>
+                                    <option value="20">20 songs</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="generate-btn" id="submitBtn">
+                                <span class="btn-text">Generate Playlist</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <div id="loadingIndicator" class="loading-section" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing musical patterns...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorAlert" class="error-section" style="display: none;">
+                <div class="error-content">
+                    <svg class="error-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <section id="resultsContainer" class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h3 class="results-title">Your AI-Generated Playlist</h3>
+                    <div id="searchInfo" class="search-info">
+                        <!-- Search info will be populated here -->
+                    </div>
+                </div>
+
+                <div class="playlist-container">
+                    <div id="recommendationsList" class="playlist-list">
+                        <!-- Recommendations will be populated here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="tech-info">
+                    <span class="tech-badge">PCA</span>
+                    <span class="tech-badge">K-Means</span>
+                    <span class="tech-badge">Cosine Similarity</span>
+                </div>
+                <p class="footer-text">Powered by advanced machine learning algorithms</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
