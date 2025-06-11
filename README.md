@@ -114,7 +114,7 @@ The project includes multiple advanced visualizations:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/music-recommendation-system.git
+git clone https://github.com/imaddde867/spotify-clusters.git
 cd music-recommendation-system
 
 # Create and activate virtual environment (recommended)
