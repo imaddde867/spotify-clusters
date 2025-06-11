@@ -1,14 +1,25 @@
+#!/usr/bin/env python3
+"""
+Spotify AI Music Recommendation Web App
+A robust Flask application with proper error handling and startup checks.
+"""
+
+import os
+import sys
+import traceback
+from pathlib import Path
+
+# Add parent directory to path for imports
+current_dir = Path(__file__).parent
+parent_dir = current_dir.parent
+sys.path.insert(0, str(parent_dir))
+
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-import json
-import traceback
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from recommendation_engine import recommend_from_name, manual_selection_fallback, load_components
-import os
 
+# Initialize Flask app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'spotify-ai-recommendations-2024'
 
 # Global variables to store loaded components
 components_loaded = False
@@ -20,18 +31,63 @@ df_pca = None
 df_clean = None
 top_features = None
 
+def check_model_files():
+    """Check if all required model files exist"""
+    models_dir = parent_dir / 'models'
+    required_files = [
+        'kmeans_model.pkl',
+        'pca_transformer.pkl',
+        'standard_scaler.pkl',
+        'minmax_scaler_tempo.pkl',
+        'df_pca.pkl',
+        'df_clean.pkl',
+        'top_features.txt'
+    ]
+
+    missing_files = []
+    for file in required_files:
+        if not (models_dir / file).exists():
+            missing_files.append(file)
+
+    if missing_files:
+        print("❌ Missing required model files:")
+        for file in missing_files:
+            print(f"   - {file}")
+        print("\n💡 To generate these files:")
+        print("   1. Open notebooks/main.ipynb in Jupyter")
+        print("   2. Run all cells to train models and save files")
+        return False
+
+    print("✅ All required model files found")
+    return True
+
 def load_ml_components():
-    """Load ML components once at startup"""
+    """Load ML components with proper error handling"""
     global components_loaded, kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features
-    
-    if not components_loaded:
-        try:
-            kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features = load_components()
-            components_loaded = True
-            print("ML components loaded successfully")
-        except Exception as e:
-            print(f"Error loading ML components: {e}")
-            raise
+
+    if components_loaded:
+        return True
+
+    try:
+        # Check if model files exist first
+        if not check_model_files():
+            return False
+
+        # Import and load components
+        from recommendation_engine import load_components
+        kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features = load_components()
+        components_loaded = True
+        print("✅ ML components loaded successfully")
+        return True
+
+    except ImportError as e:
+        print(f"❌ Import error: {e}")
+        print("💡 Make sure recommendation_engine.py is in the src directory")
+        return False
+    except Exception as e:
+        print(f"❌ Error loading ML components: {e}")
+        print(f"💡 Error details: {traceback.format_exc()}")
+        return False
 
 @app.route('/')
 def index():
@@ -58,6 +114,9 @@ def recommend():
         # Ensure playlist size is reasonable
         playlist_size = max(1, min(playlist_size, 20))
         
+        # Import recommendation functions
+        from recommendation_engine import recommend_from_name
+
         # Get recommendations
         if artist_name:
             recommendations = recommend_from_name(song_name, artist_name)
@@ -96,7 +155,8 @@ def recommend():
         try:
             if not components_loaded:
                 load_ml_components()
-            
+
+            from recommendation_engine import manual_selection_fallback
             recommendations = manual_selection_fallback(df_pca, df_clean, song_name, artist_name)
             
             # Limit to requested playlist size
@@ -148,19 +208,58 @@ def health_check():
             'error': str(e)
         }), 500
 
-if __name__ == '__main__':
-    # Load ML components at startup
+def find_available_port(start_port=5000, max_attempts=10):
+    """Find an available port starting from start_port"""
+    import socket
+    for port in range(start_port, start_port + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('localhost', port))
+                return port
+        except OSError:
+            continue
+    return None
+
+def start_app():
+    """Start the Flask application with proper error handling"""
+    print("🎵 Spotify AI Music Recommendation Web App")
+    print("=" * 50)
+
+    # Try to load ML components
+    print("📦 Loading ML components...")
+    if not load_ml_components():
+        print("\n❌ Failed to load ML components")
+        print("🔧 Please run the Jupyter notebook to generate model files first")
+        return False
+
+    # Find available port
+    port = find_available_port()
+    if not port:
+        print("❌ No available ports found")
+        return False
+
+    print(f"🚀 Starting web server on port {port}...")
+    print(f"🌐 Open your browser to: http://localhost:{port}")
+    print("=" * 50)
+
     try:
-        load_ml_components()
-        print("Starting Spotify Recommendation Web App...")
-        app.run(debug=True, host='0.0.0.0', port=5001)
+        app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)
+        return True
+    except KeyboardInterrupt:
+        print("\n👋 Shutting down gracefully...")
+        return True
     except Exception as e:
-        print(f"Failed to start application: {e}")
-        print("Make sure all required model files are present:")
-        print("- kmeans_model.pkl")
-        print("- pca_transformer.pkl") 
-        print("- standard_scaler.pkl")
-        print("- minmax_scaler_tempo.pkl")
-        print("- df_pca.pkl")
-        print("- df_clean.pkl")
-        print("- top_features.txt")
+        print(f"❌ Failed to start web server: {e}")
+        return False
+
+if __name__ == '__main__':
+    try:
+        start_app()
+    except Exception as e:
+        print(f"\n💥 Unexpected error: {e}")
+        print(f"📋 Full error details:\n{traceback.format_exc()}")
+        print("\n🔧 Troubleshooting:")
+        print("1. Make sure you're in the correct directory")
+        print("2. Run the Jupyter notebook to generate model files")
+        print("3. Check that all dependencies are installed")
+        sys.exit(1)
