@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify AI Recommendations</title>
+    <title>Spotify AI Recommendations - Discover Your Next Favorite Song</title>
+    <meta name="description" content="AI-powered music recommendations using advanced machine learning on 1.1M+ Spotify tracks">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
@@ -19,36 +20,73 @@
                     <h1>Spotify AI</h1>
                 </div>
                 <div class="header-subtitle">
-                    AI-powered music recommendations from 1.1M+ tracks
+                    Discover music with AI • 1.1M+ tracks • Advanced ML clustering
                 </div>
             </div>
         </header>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section" id="welcomeSection">
+            <div class="welcome-content">
+                <h2 class="welcome-title">🎵 Welcome to Spotify AI Recommendations</h2>
+                <p class="welcome-description">
+                    Experience the power of machine learning in music discovery. Our AI analyzes musical patterns
+                    using PCA dimensionality reduction and K-means clustering to find songs that match your taste.
+                </p>
+                <div class="demo-suggestions">
+                    <h3>Try these popular examples:</h3>
+                    <div class="suggestion-grid">
+                        <button class="suggestion-btn" data-song="Bohemian Rhapsody" data-artist="Queen">
+                            <span class="suggestion-song">Bohemian Rhapsody</span>
+                            <span class="suggestion-artist">Queen</span>
+                        </button>
+                        <button class="suggestion-btn" data-song="Shape of You" data-artist="Ed Sheeran">
+                            <span class="suggestion-song">Shape of You</span>
+                            <span class="suggestion-artist">Ed Sheeran</span>
+                        </button>
+                        <button class="suggestion-btn" data-song="Blinding Lights" data-artist="The Weeknd">
+                            <span class="suggestion-song">Blinding Lights</span>
+                            <span class="suggestion-artist">The Weeknd</span>
+                        </button>
+                        <button class="suggestion-btn" data-song="Lose Yourself" data-artist="Eminem">
+                            <span class="suggestion-song">Lose Yourself</span>
+                            <span class="suggestion-artist">Eminem</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Search Section -->
             <section class="search-section">
                 <div class="search-container">
-                    <h2 class="search-title">Find your next favorite song</h2>
+                    <div class="search-header">
+                        <h2 class="search-title">Find your next favorite song</h2>
+                        <p class="search-subtitle">Enter any song and let our AI find similar tracks you'll love</p>
+                    </div>
 
                     <form id="recommendationForm" class="search-form">
                         <div class="input-group">
                             <div class="input-field">
-                                <label for="songName">Song name</label>
+                                <label for="songName">Song name *</label>
                                 <input type="text" id="songName" name="song_name"
-                                       placeholder="Enter a song you love..." required>
+                                       placeholder="e.g., Bohemian Rhapsody" required>
+                                <div class="input-hint">Enter the exact song title for best results</div>
                             </div>
 
                             <div class="input-field">
                                 <label for="artistName">Artist (optional)</label>
                                 <input type="text" id="artistName" name="artist_name"
-                                       placeholder="Artist name...">
+                                       placeholder="e.g., Queen">
+                                <div class="input-hint">Helps improve accuracy</div>
                             </div>
                         </div>
 
                         <div class="controls-group">
                             <div class="playlist-size">
-                                <label for="playlistSize">Recommendations</label>
+                                <label for="playlistSize">Number of recommendations</label>
                                 <select id="playlistSize" name="playlist_size">
                                     <option value="5">5 songs</option>
                                     <option value="10" selected>10 songs</option>
@@ -70,30 +108,63 @@
 
             <!-- Loading State -->
             <div id="loadingIndicator" class="loading-section" style="display: none;">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Analyzing musical patterns...</p>
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <h3 class="loading-title">Analyzing musical patterns...</h3>
+                    <p class="loading-description">Our AI is processing audio features and finding similar tracks</p>
+                    <div class="loading-steps">
+                        <div class="step active" id="step1">🔍 Searching song database</div>
+                        <div class="step" id="step2">🧠 Applying ML clustering</div>
+                        <div class="step" id="step3">🎵 Finding similar tracks</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Error State -->
             <div id="errorAlert" class="error-section" style="display: none;">
                 <div class="error-content">
                     <svg class="error-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                     </svg>
-                    <span id="errorMessage"></span>
+                    <div class="error-text">
+                        <h3>Oops! Something went wrong</h3>
+                        <p id="errorMessage"></p>
+                        <button class="retry-btn" onclick="location.reload()">Try Again</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Results Section -->
             <section id="resultsContainer" class="results-section" style="display: none;">
                 <div class="results-header">
-                    <h3 class="results-title">Your AI-Generated Playlist</h3>
+                    <div class="results-title-section">
+                        <h3 class="results-title">🎵 Your AI-Generated Playlist</h3>
+                        <div class="results-actions">
+                            <button class="action-btn" id="shareBtn">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                                </svg>
+                                Share
+                            </button>
+                            <button class="action-btn" id="newSearchBtn">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                </svg>
+                                New Search
+                            </button>
+                        </div>
+                    </div>
                     <div id="searchInfo" class="search-info">
                         <!-- Search info will be populated here -->
                     </div>
                 </div>
 
                 <div class="playlist-container">
+                    <div class="playlist-header">
+                        <div class="playlist-stats" id="playlistStats">
+                            <!-- Stats will be populated here -->
+                        </div>
+                    </div>
                     <div id="recommendationsList" class="playlist-list">
                         <!-- Recommendations will be populated here -->
                     </div>
@@ -105,11 +176,16 @@
         <footer class="footer">
             <div class="footer-content">
                 <div class="tech-info">
-                    <span class="tech-badge">PCA</span>
-                    <span class="tech-badge">K-Means</span>
-                    <span class="tech-badge">Cosine Similarity</span>
+                    <div class="tech-section">
+                        <h4>How it works:</h4>
+                        <div class="tech-badges">
+                            <span class="tech-badge">PCA Dimensionality Reduction</span>
+                            <span class="tech-badge">K-Means Clustering (35 clusters)</span>
+                            <span class="tech-badge">Cosine Similarity</span>
+                        </div>
+                    </div>
                 </div>
-                <p class="footer-text">Powered by advanced machine learning algorithms</p>
+                <p class="footer-text">Built with advanced machine learning • 91.99% variance preservation • 1.1M+ tracks analyzed</p>
             </div>
         </footer>
     </div>
