@@ -42,16 +42,20 @@ song_cache = load_song_cache()
 
 def load_components():
     try:
+        # Get the directory of this script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        models_dir = os.path.join(script_dir, 'models')
+
         # Load saved components with explicit error handling
-        kmeans = joblib.load('kmeans_model.pkl')
-        pca = joblib.load('pca_transformer.pkl')
-        scaler_opt = joblib.load('standard_scaler.pkl')
-        scaler_tempo = joblib.load('minmax_scaler_tempo.pkl')
-        df_pca = pd.read_pickle('df_pca.pkl')
-        df_clean = pd.read_pickle('df_clean.pkl')
-        
+        kmeans = joblib.load(os.path.join(models_dir, 'kmeans_model.pkl'))
+        pca = joblib.load(os.path.join(models_dir, 'pca_transformer.pkl'))
+        scaler_opt = joblib.load(os.path.join(models_dir, 'standard_scaler.pkl'))
+        scaler_tempo = joblib.load(os.path.join(models_dir, 'minmax_scaler_tempo.pkl'))
+        df_pca = pd.read_pickle(os.path.join(models_dir, 'df_pca.pkl'))
+        df_clean = pd.read_pickle(os.path.join(models_dir, 'df_clean.pkl'))
+
         # Load list of top features
-        with open('top_features.txt', 'r') as f:
+        with open(os.path.join(models_dir, 'top_features.txt'), 'r') as f:
             top_features = f.read().splitlines()
             
         print("All components loaded successfully.")
@@ -552,40 +556,5 @@ def manual_testing(song_name=None):
         print(f"Error in manual testing: {e}")
         return get_random_recommendations(df_clean)
 
-if __name__ == "__main__":
-    print("\n===== Spotify Music Recommendation System =====\n")
-    
-    try:
-        # Try to authenticate with Spotify
-        sp = authenticate_spotify()
-        print("Successfully connected to Spotify API")
-        
-        # If successful, use the full recommendation system
-        song_name = input("Enter a song name: ")
-        artist_name = input("Enter artist name (optional, press Enter to skip): ")
-        if not artist_name:
-            artist_name = None
-            
-        recommendations = recommend_from_name(song_name, artist_name)
-        print("\nRecommended songs:")
-        print(recommendations)
-        
-    except Exception as e:
-        print(f"\nCould not connect to Spotify API: {e}")
-        print("\nFalling back to manual testing mode using existing dataset...")
-        
-        # Still allow user to input song details for potential dataset matching
-        song_name = input("Enter a song name to search in our dataset (or press Enter for random selection): ")
-        if song_name:
-            artist_name = input("Enter artist name (optional): ")
-            if not artist_name:
-                artist_name = None
-                
-            # Load components for the manual fallback
-            kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features = load_components()
-            recommendations = manual_selection_fallback(df_pca, df_clean, song_name, artist_name)
-        else:
-            recommendations = manual_testing()
-            
-        print("\nRecommended songs:")
-        print(recommendations)
+# This file now serves as the core recommendation engine
+# The web interface will be in app.py
