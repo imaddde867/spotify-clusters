@@ -8,8 +8,9 @@ import time
 import json
 from pathlib import Path
 from dotenv import load_dotenv
-import random  # Ensure random is imported
+import random
 import warnings
+from typing import Dict, List, Optional, Tuple, Any, Union
 
 # Suppress mathematical warnings globally for cleaner output
 warnings.filterwarnings('ignore', category=RuntimeWarning)
@@ -19,10 +20,13 @@ np.seterr(all='ignore')
 # Load environment variables from .env file
 load_dotenv()
 
-# Initialize song features cache
+# Constants
 CACHE_PATH = "song_features_cache.json"
+MAX_RETRIES = 3
+INITIAL_RETRY_DELAY = 1
+API_RATE_LIMIT_PAUSE = 0.5
 
-def load_song_cache():
+def load_song_cache() -> Dict[str, Dict[str, Any]]:
     """Load the song features cache from disk"""
     try:
         if Path(CACHE_PATH).exists():
@@ -33,7 +37,7 @@ def load_song_cache():
         print(f"Error loading cache: {e}")
         return {}
 
-def save_to_cache(song_key, song_data):
+def save_to_cache(song_key: str, song_data: Dict[str, Any]) -> None:
     """Save song data to cache"""
     try:
         cache = load_song_cache()
@@ -46,13 +50,13 @@ def save_to_cache(song_key, song_data):
 # Load song cache
 song_cache = load_song_cache()
 
-def load_components():
+def load_components() -> Tuple[Any, Any, Any, Any, pd.DataFrame, pd.DataFrame, List[str]]:
+    """Load all required ML components and data"""
     try:
-        # Get the directory of this script
         script_dir = os.path.dirname(os.path.abspath(__file__))
         models_dir = os.path.join(script_dir, 'models')
 
-        # Load saved components with explicit error handling
+        # Load saved components
         kmeans = joblib.load(os.path.join(models_dir, 'kmeans_model.pkl'))
         pca = joblib.load(os.path.join(models_dir, 'pca_transformer.pkl'))
         scaler_opt = joblib.load(os.path.join(models_dir, 'standard_scaler.pkl'))
@@ -66,113 +70,67 @@ def load_components():
 
         print("All components loaded successfully.")
 
-        # Fix data alignment issue: ensure both dataframes use track_id as index
+        # Fix data alignment issue
         df_pca, df_clean = fix_dataframe_alignment(df_pca, df_clean)
-
-        # Verify dataframes have common indices after alignment
-        common_indices = set(df_pca.index).intersection(set(df_clean.index))
-        if len(common_indices) == 0:
-            print("Warning: No common indices between df_pca and df_clean after alignment!")
-        else:
-            print(f"Found {len(common_indices)} common tracks in dataframes.")
 
         return kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features
     except Exception as e:
         print(f"Error loading components: {e}")
         raise
 
-def fix_dataframe_alignment(df_pca, df_clean):
-    """
-    Fix the data alignment issue between df_pca and df_clean.
-    Ensures both dataframes use track_id as their index for proper matching.
-    """
+def fix_dataframe_alignment(df_pca: pd.DataFrame, df_clean: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Fix the data alignment issue between df_pca and df_clean"""
     try:
         print("Fixing dataframe alignment...")
 
-        # Check current state
-        print(f"df_pca index type: {type(df_pca.index)}, name: {df_pca.index.name}")
-        print(f"df_clean index type: {type(df_clean.index)}, name: {df_clean.index.name}")
-
-        # If df_clean doesn't have track_id as index, set it
+        # Set track_id as index for both dataframes
         if df_clean.index.name != 'track_id' and 'track_id' in df_clean.columns:
-            print("Setting track_id as index for df_clean...")
             df_clean = df_clean.set_index('track_id')
             df_clean.index.name = 'track_id'
 
-        # Ensure df_pca has track_id as index name
         if df_pca.index.name != 'track_id':
             df_pca.index.name = 'track_id'
 
-        # Verify alignment and filter to common tracks only
+        # Filter to common tracks
         common_track_ids = set(df_pca.index).intersection(set(df_clean.index))
-        print(f"Found {len(common_track_ids)} common track IDs")
+        if not common_track_ids:
+            raise ValueError("No common track IDs found between dataframes!")
 
-        if len(common_track_ids) > 0:
-            # Filter both dataframes to only include common tracks
-            df_pca = df_pca.loc[list(common_track_ids)]
-            df_clean = df_clean.loc[list(common_track_ids)]
-            print(f"Filtered dataframes to {len(common_track_ids)} common tracks")
-        else:
-            print("ERROR: No common track IDs found between dataframes!")
+        df_pca = df_pca.loc[list(common_track_ids)]
+        df_clean = df_clean.loc[list(common_track_ids)]
+        print(f"Filtered dataframes to {len(common_track_ids)} common tracks")
 
         return df_pca, df_clean
 
     except Exception as e:
         print(f"Error fixing dataframe alignment: {e}")
-        return df_pca, df_clean
+        raise
 
-def authenticate_spotify():
-    """
-    Authenticate with Spotify API with proper error handling
-    """
+def authenticate_spotify() -> spotipy.Spotify:
+    """Authenticate with Spotify API"""
     try:
-        # Get credentials from environment variables
         client_id = os.getenv('SPOTIPY_CLIENT_ID')
         client_secret = os.getenv('SPOTIPY_CLIENT_SECRET')
 
-
-
-        # Check if credentials exist
         if not client_id or not client_secret:
-            raise ValueError("Missing Spotify API credentials. Set SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET environment variables.")
-        
-        # Create client with increased timeout and retries
+            raise ValueError("Missing Spotify API credentials")
+
         auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
         sp = spotipy.Spotify(auth_manager=auth_manager, requests_timeout=30, retries=5)
         
-        # Test the connection with a gentle request
-        try:
-            sp.album('4aawyAB9vmqN3uQ7FjRGTy')  # Use a specific album ID for testing
-            print("Spotify API connection successful")
-            return sp
-        except Exception as e:
-            print(f"Connection test failed: {e}")
-            raise
+        # Test connection
+        sp.album('4aawyAB9vmqN3uQ7FjRGTy')
+        print("Spotify API connection successful")
+        return sp
             
-    except ValueError as e:
+    except Exception as e:
         print(f"Authentication Error: {e}")
         raise
-    except spotipy.exceptions.SpotifyException as e:
-        print(f"Spotify API Error: {e}")
-        print("Possible causes: Invalid credentials, expired token, or API rate limiting")
-        raise
-    except Exception as e:
-        print(f"Unexpected error during authentication: {e}")
-        raise
 
-def find_song(sp, song_name, artist_name=None):
-    """
-    Search for the song data on Spotify based on its name to get its features
-    Parameters:
-        sp (Spotify object): Authenticated Spotify connection
-        song_name (str): The name of the song to search for.
-        artist_name (str, optional): The artist name to refine search.
-
-    Returns:
-        song_data (dict): A dictionary containing the song data.
-    """
+def find_song(sp: spotipy.Spotify, song_name: str, artist_name: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Search for song data on Spotify"""
     try:
-        # Check cache first
+        # Check cache
         cache_key = f"{song_name.lower()}|{artist_name.lower() if artist_name else ''}"
         if cache_key in song_cache:
             print(f"Found song in cache: {song_name}")
@@ -183,82 +141,64 @@ def find_song(sp, song_name, artist_name=None):
         if artist_name:
             query += f' artist:{artist_name}'
         
-        # Retry logic with exponential backoff for API rate limiting
-        max_retries = 3
-        retry_delay = 1
-        
-        for attempt in range(max_retries):
+        # Search with retry logic
+        retry_delay = INITIAL_RETRY_DELAY
+        for attempt in range(MAX_RETRIES):
             try:
                 results = sp.search(q=query, type='track', limit=1)
-                break  # If successful, exit the retry loop
+                break
             except spotipy.exceptions.SpotifyException as e:
-                if attempt < max_retries - 1:
+                if attempt < MAX_RETRIES - 1:
                     print(f"API request failed. Retrying in {retry_delay} seconds...")
                     time.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
+                    retry_delay *= 2
                 else:
-                    print(f"Search failed after {max_retries} attempts: {e}")
+                    print(f"Search failed after {MAX_RETRIES} attempts: {e}")
                     return None
         
-        # Process search results
         if not results['tracks']['items']:
-            print(f"No song found for: {song_name}")
             if artist_name:
-                # Retry without artist name if no results
-                print(f"Retrying search without artist name constraint...")
                 return find_song(sp, song_name)
             return None
             
         track = results['tracks']['items'][0]
         track_id = track['id']
         
-        # Short pause to avoid rate limiting
-        time.sleep(0.5)
+        time.sleep(API_RATE_LIMIT_PAUSE)
         
         # Get audio features with retry logic
-        for attempt in range(max_retries):
+        retry_delay = INITIAL_RETRY_DELAY
+        for attempt in range(MAX_RETRIES):
             try:
                 audio_features = sp.audio_features(track_id)
                 break
             except spotipy.exceptions.SpotifyException as e:
-                if attempt < max_retries - 1:
+                if attempt < MAX_RETRIES - 1:
                     print(f"API request failed. Retrying in {retry_delay} seconds...")
                     time.sleep(retry_delay)
                     retry_delay *= 2
                 else:
-                    print(f"Failed to get audio features after {max_retries} attempts.")
+                    print(f"Failed to get audio features after {MAX_RETRIES} attempts.")
                     return None
         
         if not audio_features or not audio_features[0]:
-            print(f"No audio features found for song: {song_name}")
             return None
             
-        # Get the first item from the list
         audio_features = audio_features[0]
         
-        # Add non-audio features to the audio features
-        audio_features['name'] = track['name']
-        audio_features['artist'] = track['artists'][0]['name']
-        audio_features['album'] = track['album']['name']
-        audio_features['release_date'] = track['album']['release_date']
+        # Add metadata
+        audio_features.update({
+            'name': track['name'],
+            'artist': track['artists'][0]['name'],
+            'album': track['album']['name'],
+            'release_date': track['album']['release_date']
+        })
         
-        # Create a dictionary with only the raw features we need
-        raw_features = ['danceability', 'energy', 'key', 'loudness', 'mode', 
-                       'speechiness', 'acousticness', 'instrumentalness', 
-                       'liveness', 'valence', 'tempo']
+        # Cache the result
+        save_to_cache(cache_key, audio_features)
         
-        song_data = {feature: audio_features[feature] for feature in raw_features}
-        song_data['name'] = audio_features['name']
-        song_data['artist'] = audio_features['artist']
-        
-        # Save to cache for future use
-        save_to_cache(cache_key, song_data)
-        
-        return song_data
-    
-    except spotipy.exceptions.SpotifyException as e:
-        print(f"Spotify API Error: {e}")
-        return None
+        return audio_features
+
     except Exception as e:
         print(f"Error finding song: {e}")
         return None
@@ -656,6 +596,3 @@ def manual_testing(song_name=None):
     except Exception as e:
         print(f"Error in manual testing: {e}")
         return get_random_recommendations(df_clean)
-
-# This file now serves as the core recommendation engine
-# The web interface will be in app.py
