@@ -12,25 +12,56 @@ A sophisticated machine learning-powered music recommendation system that analyz
 
 ## 🚀 Quick Start
 
-1. **Install Dependencies**:
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/imaddde867/spotify-clusters.git
+   cd spotify-clusters
+   ```
+
+2. **Set Up Environment**:
+   ```bash
+   # Copy environment template
+   cp .env.example .env
+
+   # Edit .env with your Spotify API credentials
+   # Get credentials from: https://developer.spotify.com/dashboard/
+   ```
+
+3. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Run the Application**:
+4. **Run the Application**:
    ```bash
    ./run.sh
    ```
 
-3. **Open Browser**: Navigate to `http://localhost:5001`
+5. **Open Browser**: Navigate to `http://localhost:5001`
 
-## 🔧 Configuration
+## 🔧 Environment Configuration
 
-Set your Spotify API credentials in `.env`:
-```
-SPOTIPY_CLIENT_ID=your_client_id
-SPOTIPY_CLIENT_SECRET=your_client_secret
-```
+### Required: Spotify API Setup
+
+1. **Get Spotify API Credentials**:
+   - Visit [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)
+   - Create a new app
+   - Copy your Client ID and Client Secret
+
+2. **Configure Environment**:
+   ```bash
+   # Copy the example file
+   cp .env.example .env
+
+   # Edit .env file with your credentials:
+   SPOTIPY_CLIENT_ID=your_actual_client_id_here
+   SPOTIPY_CLIENT_SECRET=your_actual_client_secret_here
+   ```
+
+3. **Security Note**:
+   - Never commit your `.env` file to version control
+   - The `.env` file contains sensitive API credentials
+   - Use `.env.example` as a template for new setups
 
 ## 📊 How It Works
 
