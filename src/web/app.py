@@ -7,20 +7,21 @@ A robust Flask application with proper error handling and startup checks.
 import os
 import sys
 import traceback
+import socket
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Tuple, Union
 
 # Add parent directory to path for imports
 current_dir = Path(__file__).parent
 parent_dir = current_dir.parent
 sys.path.insert(0, str(parent_dir))
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import pandas as pd
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'spotify-ai-recommendations-2024')
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', os.urandom(24).hex())
 
 # Global variables to store loaded components
 components_loaded = False
@@ -32,8 +33,15 @@ df_pca = None
 df_clean = None
 top_features = None
 
-def check_model_files() -> bool:
-    """Check if all required model files exist"""
+def check_model_files() -> Tuple[bool, List[str]]:
+    """
+    Check if all required model files exist
+    
+    Returns:
+        Tuple containing:
+            - Boolean indicating if all files exist
+            - List of missing files (empty if all files exist)
+    """
     models_dir = parent_dir / 'models'
     required_files = [
         'kmeans_model.pkl',
@@ -54,39 +62,57 @@ def check_model_files() -> bool:
         print("\n💡 To generate these files:")
         print("   1. Open notebooks/main.ipynb in Jupyter")
         print("   2. Run all cells to train models and save files")
-        return False
+        return False, missing_files
 
     print("✅ All required model files found")
-    return True
+    return True, []
 
-def load_ml_components() -> bool:
-    """Load ML components with proper error handling"""
+def load_ml_components() -> Tuple[bool, Optional[str]]:
+    """
+    Load ML components with proper error handling
+    
+    Returns:
+        Tuple containing:
+            - Boolean indicating success
+            - Error message if failed, None if successful
+    """
     global components_loaded, kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features
 
     if components_loaded:
-        return True
+        return True, None
 
     try:
-        if not check_model_files():
-            return False
+        files_exist, missing_files = check_model_files()
+        if not files_exist:
+            return False, f"Missing model files: {', '.join(missing_files)}"
 
         from recommendation_engine import load_components
         kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features = load_components()
         components_loaded = True
         print("✅ ML components loaded successfully")
-        return True
+        return True, None
 
     except ImportError as e:
-        print(f"❌ Import error: {e}")
+        error_msg = f"Import error: {e}"
+        print(f"❌ {error_msg}")
         print("💡 Make sure recommendation_engine.py is in the src directory")
-        return False
+        return False, error_msg
     except Exception as e:
-        print(f"❌ Error loading ML components: {e}")
+        error_msg = f"Error loading ML components: {e}"
+        print(f"❌ {error_msg}")
         print(f"💡 Error details: {traceback.format_exc()}")
-        return False
+        return False, error_msg
 
-def get_popular_examples() -> List[Dict[str, str]]:
-    """Get 3 random popular songs for examples"""
+def get_popular_examples(count: int = 3) -> List[Dict[str, str]]:
+    """
+    Get random popular songs for examples
+    
+    Args:
+        count: Number of examples to return
+        
+    Returns:
+        List of dictionaries with song and artist names
+    """
     popular_songs = [
         {"song": "Bohemian Rhapsody", "artist": "Queen"},
         {"song": "Billie Jean", "artist": "Michael Jackson"},
@@ -121,30 +147,42 @@ def get_popular_examples() -> List[Dict[str, str]]:
     ]
 
     import random
-    return random.sample(popular_songs, 3)
+    count = min(count, len(popular_songs))
+    return random.sample(popular_songs, count)
 
 @app.route('/')
 def index() -> str:
     """Main page"""
+    # Check if ML components are loaded before rendering the page
+    if not components_loaded:
+        success, error_msg = load_ml_components()
+        if not success:
+            print(f"Warning: ML components not loaded: {error_msg}")
+            # We'll still render the page, but the app will use fallback methods
+    
     return render_template('index.html')
 
 @app.route('/api/popular-examples')
-def popular_examples() -> Dict[str, Any]:
+def popular_examples() -> Response:
     """API endpoint for getting random popular song examples"""
     try:
-        examples = get_popular_examples()
+        count = request.args.get('count', default=3, type=int)
+        count = max(1, min(count, 5))  # Limit between 1 and 5
+        
+        examples = get_popular_examples(count)
         return jsonify({
             'success': True,
             'examples': examples
         })
     except Exception as e:
+        print(f"Error getting popular examples: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
-        })
+        }), 500
 
 @app.route('/recommend', methods=['POST'])
-def recommend() -> Dict[str, Any]:
+def recommend() -> Response:
     """API endpoint for getting recommendations"""
     try:
         # Get and validate form data
@@ -153,7 +191,7 @@ def recommend() -> Dict[str, Any]:
             return jsonify({
                 'success': False,
                 'error': 'No data provided'
-            })
+            }), 400
 
         song_name = data.get('song_name', '').strip()
         artist_name = data.get('artist_name', '').strip()
@@ -163,10 +201,16 @@ def recommend() -> Dict[str, Any]:
             return jsonify({
                 'success': False,
                 'error': 'Please enter a song name'
-            })
+            }), 400
         
         # Ensure playlist size is reasonable
         playlist_size = max(1, min(playlist_size, 20))
+        
+        # Ensure ML components are loaded
+        if not components_loaded:
+            success, error_msg = load_ml_components()
+            if not success:
+                print(f"Warning: Using fallback methods due to: {error_msg}")
         
         # Get recommendations
         from recommendation_engine import recommend_from_name
@@ -203,7 +247,9 @@ def recommend() -> Dict[str, Any]:
         # Try fallback method
         try:
             if not components_loaded:
-                load_ml_components()
+                success, _ = load_ml_components()
+                if not success:
+                    print("Warning: Components still not loaded, using minimal fallback")
 
             from recommendation_engine import manual_selection_fallback
             recommendations = manual_selection_fallback(
@@ -239,33 +285,49 @@ def recommend() -> Dict[str, Any]:
             return jsonify({
                 'success': False,
                 'error': 'Unable to generate recommendations. Please try again with a different song.'
-            })
+            }), 500
 
 @app.route('/health')
-def health_check() -> Dict[str, Any]:
+def health_check() -> Response:
     """Health check endpoint"""
     try:
-        if not components_loaded:
-            if not load_ml_components():
-                return jsonify({
-                    'status': 'error',
-                    'message': 'Failed to load ML components'
-                })
-
-        return jsonify({
+        status_info = {
             'status': 'healthy',
-            'components_loaded': components_loaded
-        })
+            'components_loaded': components_loaded,
+            'python_version': sys.version,
+            'timestamp': pd.Timestamp.now().isoformat()
+        }
+        
+        if not components_loaded:
+            success, error_msg = load_ml_components()
+            if not success:
+                status_info['status'] = 'degraded'
+                status_info['message'] = f'Failed to load ML components: {error_msg}'
+                return jsonify(status_info), 503  # Service Unavailable
+
+        return jsonify(status_info)
     except Exception as e:
-        return jsonify({
+        error_info = {
             'status': 'error',
-            'message': str(e)
-        })
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        }
+        return jsonify(error_info), 500
 
 def find_available_port(start_port: int = 5000, max_attempts: int = 10) -> int:
-    """Find an available port to run the Flask app"""
-    import socket
+    """
+    Find an available port to run the Flask app
     
+    Args:
+        start_port: Port number to start checking from
+        max_attempts: Maximum number of ports to check
+        
+    Returns:
+        Available port number
+        
+    Raises:
+        RuntimeError: If no available port is found
+    """
     for port in range(start_port, start_port + max_attempts):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -278,15 +340,26 @@ def find_available_port(start_port: int = 5000, max_attempts: int = 10) -> int:
 def start_app() -> None:
     """Start the Flask application"""
     try:
-        if not load_ml_components():
-            print("❌ Failed to load ML components. Exiting...")
-            sys.exit(1)
-
-        port = find_available_port()
-        print(f"🚀 Starting server on port {port}")
-        app.run(host='0.0.0.0', port=port, debug=False)
+        # Try to load ML components, but continue even if it fails
+        success, error_msg = load_ml_components()
+        if not success:
+            print(f"⚠️ Warning: ML components not loaded: {error_msg}")
+            print("⚠️ The application will use fallback methods for recommendations")
+        
+        # Determine environment
+        flask_env = os.getenv('FLASK_ENV', 'production')
+        debug_mode = flask_env == 'development'
+        
+        # Find available port
+        start_port = 5001 if debug_mode else 5000
+        port = find_available_port(start_port=start_port)
+        
+        # Start server
+        print(f"🚀 Starting server on port {port} in {flask_env} mode")
+        app.run(host='0.0.0.0', port=port, debug=debug_mode)
     except Exception as e:
         print(f"❌ Error starting app: {e}")
+        print(traceback.format_exc())
         sys.exit(1)
 
 if __name__ == '__main__':
