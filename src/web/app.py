@@ -8,6 +8,7 @@ import os
 import sys
 import traceback
 from pathlib import Path
+from typing import Dict, List, Any, Optional, Tuple
 
 # Add parent directory to path for imports
 current_dir = Path(__file__).parent
@@ -19,7 +20,7 @@ import pandas as pd
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'spotify-ai-recommendations-2024'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'spotify-ai-recommendations-2024')
 
 # Global variables to store loaded components
 components_loaded = False
@@ -31,7 +32,7 @@ df_pca = None
 df_clean = None
 top_features = None
 
-def check_model_files():
+def check_model_files() -> bool:
     """Check if all required model files exist"""
     models_dir = parent_dir / 'models'
     required_files = [
@@ -44,10 +45,7 @@ def check_model_files():
         'top_features.txt'
     ]
 
-    missing_files = []
-    for file in required_files:
-        if not (models_dir / file).exists():
-            missing_files.append(file)
+    missing_files = [file for file in required_files if not (models_dir / file).exists()]
 
     if missing_files:
         print("❌ Missing required model files:")
@@ -61,7 +59,7 @@ def check_model_files():
     print("✅ All required model files found")
     return True
 
-def load_ml_components():
+def load_ml_components() -> bool:
     """Load ML components with proper error handling"""
     global components_loaded, kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features
 
@@ -69,11 +67,9 @@ def load_ml_components():
         return True
 
     try:
-        # Check if model files exist first
         if not check_model_files():
             return False
 
-        # Import and load components
         from recommendation_engine import load_components
         kmeans, pca, scaler_opt, scaler_tempo, df_pca, df_clean, top_features = load_components()
         components_loaded = True
@@ -89,7 +85,7 @@ def load_ml_components():
         print(f"💡 Error details: {traceback.format_exc()}")
         return False
 
-def get_popular_examples():
+def get_popular_examples() -> List[Dict[str, str]]:
     """Get 3 random popular songs for examples"""
     popular_songs = [
         {"song": "Bohemian Rhapsody", "artist": "Queen"},
@@ -128,12 +124,12 @@ def get_popular_examples():
     return random.sample(popular_songs, 3)
 
 @app.route('/')
-def index():
+def index() -> str:
     """Main page"""
     return render_template('index.html')
 
 @app.route('/api/popular-examples')
-def popular_examples():
+def popular_examples() -> Dict[str, Any]:
     """API endpoint for getting random popular song examples"""
     try:
         examples = get_popular_examples()
@@ -148,16 +144,21 @@ def popular_examples():
         })
 
 @app.route('/recommend', methods=['POST'])
-def recommend():
+def recommend() -> Dict[str, Any]:
     """API endpoint for getting recommendations"""
     try:
-        # Get form data
+        # Get and validate form data
         data = request.get_json()
+        if not data:
+            return jsonify({
+                'success': False,
+                'error': 'No data provided'
+            })
+
         song_name = data.get('song_name', '').strip()
         artist_name = data.get('artist_name', '').strip()
         playlist_size = int(data.get('playlist_size', 5))
         
-        # Validate input
         if not song_name:
             return jsonify({
                 'success': False,
@@ -167,22 +168,17 @@ def recommend():
         # Ensure playlist size is reasonable
         playlist_size = max(1, min(playlist_size, 20))
         
-        # Import recommendation functions
-        from recommendation_engine import recommend_from_name
-
         # Get recommendations
-        if artist_name:
-            recommendations = recommend_from_name(song_name, artist_name, playlist_size)
-        else:
-            recommendations = recommend_from_name(song_name, None, playlist_size)
-        
-        # Limit to requested playlist size
-        if len(recommendations) > playlist_size:
-            recommendations = recommendations.head(playlist_size)
+        from recommendation_engine import recommend_from_name
+        recommendations = recommend_from_name(
+            song_name, 
+            artist_name if artist_name else None, 
+            playlist_size
+        )
         
         # Convert to list of dictionaries for JSON response
         recommendations_list = []
-        for idx, row in recommendations.iterrows():
+        for _, row in recommendations.iterrows():
             recommendations_list.append({
                 'track_name': row.get('track_name', 'Unknown Track'),
                 'artist_name': row.get('artist_name', 'Unknown Artist'),
@@ -210,14 +206,16 @@ def recommend():
                 load_ml_components()
 
             from recommendation_engine import manual_selection_fallback
-            recommendations = manual_selection_fallback(df_pca, df_clean, song_name, artist_name, playlist_size)
-            
-            # Limit to requested playlist size
-            if len(recommendations) > playlist_size:
-                recommendations = recommendations.head(playlist_size)
+            recommendations = manual_selection_fallback(
+                df_pca, 
+                df_clean, 
+                song_name, 
+                artist_name, 
+                playlist_size
+            )
             
             recommendations_list = []
-            for idx, row in recommendations.iterrows():
+            for _, row in recommendations.iterrows():
                 recommendations_list.append({
                     'track_name': row.get('track_name', 'Unknown Track'),
                     'artist_name': row.get('artist_name', 'Unknown Artist'),
@@ -244,75 +242,52 @@ def recommend():
             })
 
 @app.route('/health')
-def health_check():
+def health_check() -> Dict[str, Any]:
     """Health check endpoint"""
     try:
         if not components_loaded:
-            load_ml_components()
-        
+            if not load_ml_components():
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Failed to load ML components'
+                })
+
         return jsonify({
             'status': 'healthy',
-            'components_loaded': components_loaded,
-            'dataset_size': len(df_clean) if df_clean is not None else 0
+            'components_loaded': components_loaded
         })
     except Exception as e:
         return jsonify({
-            'status': 'unhealthy',
-            'error': str(e)
-        }), 500
+            'status': 'error',
+            'message': str(e)
+        })
 
-def find_available_port(start_port=5000, max_attempts=10):
-    """Find an available port starting from start_port"""
+def find_available_port(start_port: int = 5000, max_attempts: int = 10) -> int:
+    """Find an available port to run the Flask app"""
     import socket
+    
     for port in range(start_port, start_port + max_attempts):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.bind(('localhost', port))
+                s.bind(('', port))
                 return port
         except OSError:
             continue
-    return None
+    raise RuntimeError(f"Could not find an available port after {max_attempts} attempts")
 
-def start_app():
-    """Start the Flask application with proper error handling"""
-    print("🎵 Spotify AI Music Recommendation Web App")
-    print("=" * 50)
-
-    # Try to load ML components
-    print("📦 Loading ML components...")
-    if not load_ml_components():
-        print("\n❌ Failed to load ML components")
-        print("🔧 Please run the Jupyter notebook to generate model files first")
-        return False
-
-    # Find available port
-    port = find_available_port()
-    if not port:
-        print("❌ No available ports found")
-        return False
-
-    print(f"🚀 Starting web server on port {port}...")
-    print(f"🌐 Open your browser to: http://localhost:{port}")
-    print("=" * 50)
-
+def start_app() -> None:
+    """Start the Flask application"""
     try:
-        app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)
-        return True
-    except KeyboardInterrupt:
-        print("\n👋 Shutting down gracefully...")
-        return True
+        if not load_ml_components():
+            print("❌ Failed to load ML components. Exiting...")
+            sys.exit(1)
+
+        port = find_available_port()
+        print(f"🚀 Starting server on port {port}")
+        app.run(host='0.0.0.0', port=port, debug=False)
     except Exception as e:
-        print(f"❌ Failed to start web server: {e}")
-        return False
+        print(f"❌ Error starting app: {e}")
+        sys.exit(1)
 
 if __name__ == '__main__':
-    try:
-        start_app()
-    except Exception as e:
-        print(f"\n💥 Unexpected error: {e}")
-        print(f"📋 Full error details:\n{traceback.format_exc()}")
-        print("\n🔧 Troubleshooting:")
-        print("1. Make sure you're in the correct directory")
-        print("2. Run the Jupyter notebook to generate model files")
-        print("3. Check that all dependencies are installed")
-        sys.exit(1)
+    start_app()
