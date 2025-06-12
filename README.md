@@ -1,189 +1,74 @@
-# 🎵 Music Recommendation System Using Spotify Data
+# 🎵 Spotify AI Music Recommendation System
 
-A sophisticated data science project leveraging advanced unsupervised machine learning techniques to analyze Spotify track features, identify meaningful musical patterns, and generate personalized recommendations based on audio similarity.
+A sophisticated machine learning-powered music recommendation system that analyzes audio features to suggest similar tracks.
 
-[![Music Visualization](https://img.shields.io/badge/Visualization-PCA%20%26%20Clustering-blueviolet)](cluster_visualization.png)
-[![Dataset Size](https://img.shields.io/badge/Dataset-1.1M%2B%20Songs-brightgreen)](data/spotify_data.csv)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+## ✨ Features
 
-## 📊 Project Overview
+- **AI-Powered Recommendations**: Uses K-means clustering and PCA for intelligent music suggestions
+- **1.1M+ Track Dataset**: Comprehensive Spotify dataset with audio features
+- **Smart Fallback System**: Works with or without Spotify API access
+- **Clean Web Interface**: Modern, responsive web application
+- **Real-time Processing**: Fast recommendations using pre-trained models
 
-This project applies sophisticated unsupervised learning techniques to a massive Spotify dataset (1.1M+ tracks) to:
+## 🚀 Quick Start
 
-- Extract and transform audio features into meaningful musical dimensions
-- Reduce high-dimensional data complexity through Principal Component Analysis (PCA)
-- Identify optimal clustering parameters through multiple evaluation metrics
-- Build a content-based recommendation engine using audio similarity
-- Provide data-driven insights into musical patterns and relationships
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-The system successfully identifies hidden structures in Spotify's audio features and creates musically coherent recommendations across diverse genres.
+2. **Run the Application**:
+   ```bash
+   ./run.sh
+   ```
 
-## 🔬 Key Technical Features
+3. **Open Browser**: Navigate to `http://localhost:5001`
 
-### Data Processing & Feature Engineering
-- Initial dataset: **1,159,764 tracks** with 20 attributes
-- **Custom musical dimensions** created from raw audio features:
-  - `energy_dynamics`: Captures intensity and activity level
-  - `dance_rhythm`: Combines danceability and tempo characteristics
-  - `emotional_content`: Represents musical mood and positiveness
-  - `vocal_presence`: Measures the balance of vocals vs. instrumental content
-  - `performance_style`: Identifies live recording characteristics
+## 🔧 Configuration
 
-### Advanced Dimensionality Reduction
-- **Principal Component Analysis (PCA)** implementation with:
-  - 6 principal components capturing **91.99% of total variance**
-  - 3D visualization of component relationships
-  - Meaningful mapping of audio features to latent space
-
-### Optimization-Driven Clustering
-- K-means clustering implemented with:
-  - Comprehensive evaluation using **silhouette score, Davies-Bouldin, and Calinski-Harabasz metrics**
-  - Automated optimal cluster detection (n=35)
-  - Systematic approach to finding the ideal clustering configuration
-
-### Recommendation Algorithm
-- Content-based recommendation using:
-  - Cluster membership as initial filtering mechanism
-  - Cosine similarity to identify most similar tracks within clusters
-  - Multi-factor similarity calculations in reduced dimensional space
-
-## 🧪 Methodology & Workflow
-
-### 1. Data Loading & Cleaning
-- Loaded 1.1M+ tracks from Spotify dataset
-- Identified and handled missing values (16 records dropped)
-- Verified dataset integrity and duplicates (0 found)
-
-### 2. Feature Selection & Engineering
-- Selected 11 core audio features for analysis
-- Created one-hot encoding for categorical variables (key, mode)
-- Engineered composite features including energy-to-acousticness ratio
-
-### 3. Statistical Analysis & Transformation
-- Applied appropriate scaling techniques:
-  - Min-max scaling for bounded features
-  - Standard scaling for dimensional uniformity
-- Correlation analysis to identify and handle feature redundancy
-
-### 4. Feature Importance Analysis
-- Implemented Random Forest for feature importance ranking
-- Identified key features driving musical similarity:
-  - energy_to_acousticness_ratio (highest importance)
-  - danceability
-  - tempo
-  - valence
-  - speechiness
-
-### 5. Dimensionality Reduction & Clustering
-- Applied PCA to reduce dimensions while preserving 91.99% variance
-- Evaluated optimal cluster count using multiple metrics
-- Implemented k-means clustering with silhouette score validation
-
-### 6. Recommendation System
-- Track recommendation based on cluster membership and cosine similarity
-- Additional metadata integration for enhanced result presentation
-- Evaluation through cross-genre recommendation quality
-
-## 📊 Key Visualizations
-
-The project includes multiple advanced visualizations:
-
-1. **Correlation Matrix Heatmap**: Revealing relationships between audio features
-2. **Feature Importance Ranking**: Identifying the most significant musical dimensions
-3. **3D PCA Visualization**: Mapping the music feature space in three dimensions
-4. **Clustering Metrics Analysis**: Multi-metric evaluation of cluster configurations
-5. **Cluster Visualization**: Final 2D representation of the music landscape
-
-## 🔧 Technical Stack
-
-- **Data Processing**: Pandas, NumPy
-- **Machine Learning**: scikit-learn (PCA, K-means, RandomForest)
-- **Visualization**: Matplotlib, Seaborn
-- **Performance Optimization**: Multiprocessing for parallel computation
-- **Development Environment**: Jupyter Lab/Notebook
-
-## 🌐 Web Application
-
-**NEW!** This project now includes a professional web application that transforms the Jupyter notebook analysis into a user-friendly interface.
-
-### ✨ Web App Features
-- **🎵 Song Search**: Enter any song name with optional artist filtering
-- **🎯 AI Recommendations**: Get 5-20 similar tracks using ML clustering
-- **📱 Responsive Design**: Modern, mobile-friendly interface
-- **🔗 Spotify Integration**: Direct links to open tracks in Spotify
-- **⚡ Fast Performance**: Sub-3-second recommendation generation
-
-### 🚀 Quick Start (Web App)
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the web application
-python run_webapp.py
-
-# Open browser to http://localhost:5000
+Set your Spotify API credentials in `.env`:
+```
+SPOTIPY_CLIENT_ID=your_client_id
+SPOTIPY_CLIENT_SECRET=your_client_secret
 ```
 
-## 🚀 Getting Started
+## 📊 How It Works
 
-### Prerequisites
-- Python 3.8+
-- Required libraries: Flask, pandas, numpy, scikit-learn, matplotlib, seaborn
+1. **Data Processing**: 1.1M+ tracks analyzed with audio features
+2. **Feature Engineering**: Custom musical dimensions created
+3. **Dimensionality Reduction**: PCA captures 91.99% of variance
+4. **Clustering**: K-means groups similar tracks
+5. **Recommendations**: Cosine similarity finds matching songs
 
-### Installation Options
+## 🎯 System Status
 
-#### Option 1: Web Application (Recommended)
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/music-recommendation-system.git
-cd music-recommendation-system
+✅ **Data Alignment**: Perfect alignment between all components  
+✅ **ML Models**: Updated to latest scikit-learn version  
+✅ **API Integration**: Spotify API with intelligent fallback  
+✅ **Web Interface**: Clean, responsive design  
+✅ **Recommendation Engine**: Smart AI-based suggestions  
 
-# Install dependencies
-pip install -r requirements.txt
+## 📁 Project Structure
 
-# Generate model files (run once)
-jupyter notebook main.ipynb  # Run all cells
-
-# Start web application
-python run_webapp.py
+```
+spotify-clusters/
+├── src/
+│   ├── recommendation_engine.py    # Core ML engine
+│   ├── models/                     # Trained models & data
+│   └── web/                        # Web application
+├── notebooks/                      # Analysis notebooks
+├── data/                          # Dataset files
+└── run.sh                         # Launch script
 ```
 
-#### Option 2: Jupyter Notebook Analysis
-```bash
-# Create and activate virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+## 🔮 Technical Details
 
-# Install required dependencies
-pip install -r requirements.txt
+- **Machine Learning**: K-means clustering, PCA, StandardScaler
+- **Web Framework**: Flask with modern frontend
+- **Data Processing**: Pandas, NumPy for 1.1M+ records
+- **API Integration**: Spotipy for Spotify Web API
+- **Deployment**: Production-ready with proper error handling
 
-# Run the analysis
-jupyter notebook main.ipynb
-```
+---
 
-#### Option 3: Command Line Interface
-```bash
-# After installing dependencies and generating models
-python main.py
-```
-
-## 🔮 Future Enhancements
-
-1. **Hybrid Recommendation System**: Integrating collaborative filtering with content-based approach
-2. **Real-time API Integration**: Connecting to Spotify API for dynamic recommendations
-3. **Interactive Web Interface**: Building a user-friendly recommendation platform
-4. **Time-Based Analysis**: Exploring evolution of music characteristics over decades
-5. **Genre Classification**: Implementing supervised learning for genre prediction
-6. **Playlist Generation**: Automated creation of coherent playlists
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Spotify for providing the rich audio feature dataset
-- scikit-learn community for comprehensive ML implementation
-- The academic research on music information retrieval systems
+**Status**: ✅ Production Ready | **Last Updated**: June 2025

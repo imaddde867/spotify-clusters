@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const welcomeSection = document.getElementById('welcomeSection');
 
-    // Initialize suggestion buttons
-    initializeSuggestions();
+    // Load popular examples dynamically
+    loadPopularExamples();
 
     // Form submission handler
     form.addEventListener('submit', async function(e) {
@@ -59,6 +59,104 @@ document.addEventListener('DOMContentLoaded', function() {
             hideLoading();
         }
     });
+
+    async function loadPopularExamples() {
+        const suggestionGrid = document.getElementById('suggestion-grid');
+
+        try {
+            const response = await fetch('/api/popular-examples');
+            const result = await response.json();
+
+            if (result.success && result.examples) {
+                // Clear loading state
+                suggestionGrid.innerHTML = '';
+
+                // Add new examples
+                result.examples.forEach(example => {
+                    const button = document.createElement('button');
+                    button.className = 'suggestion-btn';
+                    button.dataset.song = example.song;
+                    button.dataset.artist = example.artist;
+
+                    button.innerHTML = `
+                        <span class="suggestion-song">${escapeHtml(example.song)}</span>
+                        <span class="suggestion-artist">${escapeHtml(example.artist)}</span>
+                    `;
+
+                    // Add click handler
+                    button.addEventListener('click', function() {
+                        const song = this.dataset.song;
+                        const artist = this.dataset.artist;
+
+                        document.getElementById('songName').value = song;
+                        document.getElementById('artistName').value = artist;
+
+                        // Smooth scroll to form
+                        document.querySelector('.search-section').scrollIntoView({
+                            behavior: 'smooth'
+                        });
+
+                        // Focus on the form
+                        setTimeout(() => {
+                            document.getElementById('songName').focus();
+                        }, 500);
+                    });
+
+                    suggestionGrid.appendChild(button);
+                });
+            } else {
+                // Fallback to static examples
+                loadFallbackExamples();
+            }
+        } catch (error) {
+            console.error('Error loading popular examples:', error);
+            loadFallbackExamples();
+        }
+    }
+
+    function loadFallbackExamples() {
+        const suggestionGrid = document.getElementById('suggestion-grid');
+        const fallbackExamples = [
+            { song: 'Bohemian Rhapsody', artist: 'Queen' },
+            { song: 'Blinding Lights', artist: 'The Weeknd' },
+            { song: 'Shape of You', artist: 'Ed Sheeran' }
+        ];
+
+        suggestionGrid.innerHTML = '';
+
+        fallbackExamples.forEach(example => {
+            const button = document.createElement('button');
+            button.className = 'suggestion-btn';
+            button.dataset.song = example.song;
+            button.dataset.artist = example.artist;
+
+            button.innerHTML = `
+                <span class="suggestion-song">${escapeHtml(example.song)}</span>
+                <span class="suggestion-artist">${escapeHtml(example.artist)}</span>
+            `;
+
+            // Add click handler
+            button.addEventListener('click', function() {
+                const song = this.dataset.song;
+                const artist = this.dataset.artist;
+
+                document.getElementById('songName').value = song;
+                document.getElementById('artistName').value = artist;
+
+                // Smooth scroll to form
+                document.querySelector('.search-section').scrollIntoView({
+                    behavior: 'smooth'
+                });
+
+                // Focus on the form
+                setTimeout(() => {
+                    document.getElementById('songName').focus();
+                }, 500);
+            });
+
+            suggestionGrid.appendChild(button);
+        });
+    }
 
     function initializeSuggestions() {
         const suggestionBtns = document.querySelectorAll('.suggestion-btn');

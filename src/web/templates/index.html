@@ -35,23 +35,12 @@
                 </p>
                 <div class="demo-suggestions">
                     <h3>Try these popular examples:</h3>
-                    <div class="suggestion-grid">
-                        <button class="suggestion-btn" data-song="Bohemian Rhapsody" data-artist="Queen">
-                            <span class="suggestion-song">Bohemian Rhapsody</span>
-                            <span class="suggestion-artist">Queen</span>
-                        </button>
-                        <button class="suggestion-btn" data-song="Shape of You" data-artist="Ed Sheeran">
-                            <span class="suggestion-song">Shape of You</span>
-                            <span class="suggestion-artist">Ed Sheeran</span>
-                        </button>
-                        <button class="suggestion-btn" data-song="Blinding Lights" data-artist="The Weeknd">
-                            <span class="suggestion-song">Blinding Lights</span>
-                            <span class="suggestion-artist">The Weeknd</span>
-                        </button>
-                        <button class="suggestion-btn" data-song="Lose Yourself" data-artist="Eminem">
-                            <span class="suggestion-song">Lose Yourself</span>
-                            <span class="suggestion-artist">Eminem</span>
-                        </button>
+                    <div class="suggestion-grid" id="suggestion-grid">
+                        <!-- Examples will be loaded dynamically -->
+                        <div class="loading-examples">
+                            <div class="loading-spinner"></div>
+                            <span>Loading examples...</span>
+                        </div>
                     </div>
                 </div>
             </div>
