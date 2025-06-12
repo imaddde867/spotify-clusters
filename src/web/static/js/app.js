@@ -1,4 +1,4 @@
-// Enhanced Spotify AI Recommendations - Better UX JavaScript
+// Enhanced Spotify AI Recommendations - Better UX JavaScript with Dark Mode & Music Player
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('recommendationForm');
@@ -7,9 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultsContainer = document.getElementById('resultsContainer');
     const submitBtn = document.getElementById('submitBtn');
     const welcomeSection = document.getElementById('welcomeSection');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Initialize theme
+    initializeTheme();
 
     // Load popular examples dynamically
     loadPopularExamples();
+
+    // Theme toggle handler
+    themeToggle.addEventListener('click', toggleTheme);
 
     // Form submission handler
     form.addEventListener('submit', async function(e) {
@@ -193,10 +200,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideLoading() {
         loadingIndicator.style.display = 'none';
         submitBtn.disabled = false;
-        submitBtn.querySelector('.btn-text').textContent = 'Generate Playlist';
+        submitBtn.querySelector('.btn-text').textContent = 'Find Similar Songs';
 
         // Reset loading steps
         resetLoadingSteps();
+    }
+
+    function initializeTheme() {
+        // Check for saved theme preference or default to light mode
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        // Add a subtle animation
+        document.body.style.transition = 'background-color 0.3s ease';
+        setTimeout(() => {
+            document.body.style.transition = '';
+        }, 300);
     }
 
     function animateLoadingSteps() {
@@ -425,63 +452,54 @@ document.addEventListener('DOMContentLoaded', function() {
         window.open(spotifyUrl, '_blank');
 
         // Show feedback
-        showToast('Opening in Spotify...');
+        showToast('🎧 Opening in Spotify...');
     };
 
-    // Auto-focus on song name input
-    document.getElementById('songName').focus();
 
-    // Add enter key support for all inputs
-    const inputs = form.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+
+
+
+    // Initialize keyboard shortcuts and accessibility
+    initializeKeyboardShortcuts();
+    initializeAccessibility();
+
+    function initializeKeyboardShortcuts() {
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                form.dispatchEvent(new Event('submit'));
+                document.getElementById('songName').focus();
+            }
+
+            // Escape to clear and start over
+            if (e.key === 'Escape') {
+                if (resultsContainer.style.display !== 'none') {
+                    document.getElementById('newSearchBtn').click();
+                }
+            }
+
+            // Ctrl/Cmd + D to toggle dark mode
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
             }
         });
-    });
+    }
 
-    // Add subtle hover effects
-    document.addEventListener('mouseover', function(e) {
-        if (e.target.closest('.track-item')) {
-            e.target.closest('.track-item').style.transform = 'translateX(4px)';
-        }
-    });
+    function initializeAccessibility() {
+        // Add enter key support for all inputs
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+                    e.preventDefault();
+                    form.dispatchEvent(new Event('submit'));
+                }
+            });
+        });
 
-    document.addEventListener('mouseout', function(e) {
-        if (e.target.closest('.track-item')) {
-            e.target.closest('.track-item').style.transform = 'translateX(0)';
-        }
-    });
-
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + K to focus search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            document.getElementById('songName').focus();
-        }
-
-        // Escape to clear and start over
-        if (e.key === 'Escape') {
-            if (resultsContainer.style.display !== 'none') {
-                document.getElementById('newSearchBtn').click();
-            }
-        }
-    });
-
-    // Add CSS for toast animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
+        // Auto-focus on song name input
+        document.getElementById('songName').focus();
+    }
 });
