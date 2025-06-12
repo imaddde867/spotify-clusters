@@ -89,10 +89,63 @@ def load_ml_components():
         print(f"💡 Error details: {traceback.format_exc()}")
         return False
 
+def get_popular_examples():
+    """Get 3 random popular songs for examples"""
+    popular_songs = [
+        {"song": "Bohemian Rhapsody", "artist": "Queen"},
+        {"song": "Billie Jean", "artist": "Michael Jackson"},
+        {"song": "Hotel California", "artist": "Eagles"},
+        {"song": "Imagine", "artist": "John Lennon"},
+        {"song": "Sweet Child O' Mine", "artist": "Guns N' Roses"},
+        {"song": "Stairway to Heaven", "artist": "Led Zeppelin"},
+        {"song": "Smells Like Teen Spirit", "artist": "Nirvana"},
+        {"song": "Like a Rolling Stone", "artist": "Bob Dylan"},
+        {"song": "Purple Haze", "artist": "Jimi Hendrix"},
+        {"song": "Good Vibrations", "artist": "The Beach Boys"},
+        {"song": "Respect", "artist": "Aretha Franklin"},
+        {"song": "Hey Jude", "artist": "The Beatles"},
+        {"song": "What's Going On", "artist": "Marvin Gaye"},
+        {"song": "Waterloo Sunset", "artist": "The Kinks"},
+        {"song": "I Want to Hold Your Hand", "artist": "The Beatles"},
+        {"song": "Dancing Queen", "artist": "ABBA"},
+        {"song": "Superstition", "artist": "Stevie Wonder"},
+        {"song": "Blinding Lights", "artist": "The Weeknd"},
+        {"song": "Shape of You", "artist": "Ed Sheeran"},
+        {"song": "Uptown Funk", "artist": "Mark Ronson ft. Bruno Mars"},
+        {"song": "Rolling in the Deep", "artist": "Adele"},
+        {"song": "Someone Like You", "artist": "Adele"},
+        {"song": "Lose Yourself", "artist": "Eminem"},
+        {"song": "Crazy in Love", "artist": "Beyoncé"},
+        {"song": "Halo", "artist": "Beyoncé"},
+        {"song": "Umbrella", "artist": "Rihanna"},
+        {"song": "Single Ladies", "artist": "Beyoncé"},
+        {"song": "Bad Romance", "artist": "Lady Gaga"},
+        {"song": "Poker Face", "artist": "Lady Gaga"},
+        {"song": "Viva La Vida", "artist": "Coldplay"}
+    ]
+
+    import random
+    return random.sample(popular_songs, 3)
+
 @app.route('/')
 def index():
     """Main page"""
     return render_template('index.html')
+
+@app.route('/api/popular-examples')
+def popular_examples():
+    """API endpoint for getting random popular song examples"""
+    try:
+        examples = get_popular_examples()
+        return jsonify({
+            'success': True,
+            'examples': examples
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
@@ -119,9 +172,9 @@ def recommend():
 
         # Get recommendations
         if artist_name:
-            recommendations = recommend_from_name(song_name, artist_name)
+            recommendations = recommend_from_name(song_name, artist_name, playlist_size)
         else:
-            recommendations = recommend_from_name(song_name)
+            recommendations = recommend_from_name(song_name, None, playlist_size)
         
         # Limit to requested playlist size
         if len(recommendations) > playlist_size:
@@ -157,7 +210,7 @@ def recommend():
                 load_ml_components()
 
             from recommendation_engine import manual_selection_fallback
-            recommendations = manual_selection_fallback(df_pca, df_clean, song_name, artist_name)
+            recommendations = manual_selection_fallback(df_pca, df_clean, song_name, artist_name, playlist_size)
             
             # Limit to requested playlist size
             if len(recommendations) > playlist_size:
