@@ -21,7 +21,7 @@ np.seterr(all='ignore')
 load_dotenv()
 
 # Constants
-CACHE_PATH = "song_features_cache.json"
+CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "song_features_cache.json")
 MAX_RETRIES = 3
 INITIAL_RETRY_DELAY = 1
 API_RATE_LIMIT_PAUSE = 0.5
@@ -203,10 +203,21 @@ def find_song(sp: spotipy.Spotify, song_name: str, artist_name: Optional[str] = 
         print(f"Error finding song: {e}")
         return None
 
-def preprocess_song(song_data, scaler_tempo, scaler_opt, pca, top_features):
-    '''
+def preprocess_song(song_data: Dict[str, Any], scaler_tempo: Any, scaler_opt: Any, 
+                   pca: Any, top_features: List[str]) -> pd.DataFrame:
+    """
     Preprocess new song data to match the format of the preprocessed dataset
-    '''
+    
+    Args:
+        song_data: Dictionary or DataFrame containing song features
+        scaler_tempo: MinMax scaler for tempo feature
+        scaler_opt: Standard scaler for other features
+        pca: PCA transformer
+        top_features: List of feature names used in the model
+        
+    Returns:
+        DataFrame with PCA-transformed features
+    """
     try:
         # Convert the song_data to a pandas dataframe if necessary
         if not isinstance(song_data, pd.DataFrame):
@@ -256,9 +267,16 @@ def preprocess_song(song_data, scaler_tempo, scaler_opt, pca, top_features):
         print(f"Error preprocessing song: {e}")
         raise
 
-def predict_cluster(pca_features, kmeans):
+def predict_cluster(pca_features: pd.DataFrame, kmeans: Any) -> int:
     """
     Predict the cluster for a song based on its PCA features
+    
+    Args:
+        pca_features: DataFrame with PCA-transformed features
+        kmeans: Trained K-means clustering model
+        
+    Returns:
+        Cluster ID (integer)
     """
     try:
         cluster = kmeans.predict(pca_features)[0]
@@ -267,9 +285,21 @@ def predict_cluster(pca_features, kmeans):
         print(f"Error predicting cluster: {e}")
         raise
 
-def find_similar_songs(song_pca_features, cluster, df_pca, df_clean, n_recommendations=5):
+def find_similar_songs(song_pca_features: pd.DataFrame, cluster: int, 
+                      df_pca: pd.DataFrame, df_clean: pd.DataFrame, 
+                      n_recommendations: int = 5) -> pd.DataFrame:
     """
     Find similar songs within the same cluster using improved data alignment
+    
+    Args:
+        song_pca_features: PCA-transformed features of the query song
+        cluster: Cluster ID of the query song
+        df_pca: DataFrame with PCA features and cluster assignments
+        df_clean: DataFrame with song metadata
+        n_recommendations: Number of recommendations to return
+        
+    Returns:
+        DataFrame with recommended songs
     """
     try:
         # Get songs in the same cluster
@@ -341,8 +371,17 @@ def find_similar_songs(song_pca_features, cluster, df_pca, df_clean, n_recommend
         print(f"Error finding similar songs: {e}")
         return get_random_recommendations(df_clean, n_recommendations)
 
-def get_random_recommendations(df_clean, n_recommendations=5):
-    """Helper function to get random recommendations when other methods fail"""
+def get_random_recommendations(df_clean: pd.DataFrame, n_recommendations: int = 5) -> pd.DataFrame:
+    """
+    Helper function to get random recommendations when other methods fail
+    
+    Args:
+        df_clean: DataFrame with song metadata
+        n_recommendations: Number of recommendations to return
+        
+    Returns:
+        DataFrame with random song recommendations
+    """
     try:
         if len(df_clean) <= n_recommendations:
             sample_tracks = df_clean.copy()
@@ -377,9 +416,20 @@ def get_random_recommendations(df_clean, n_recommendations=5):
             'popularity': [0] * n_recommendations
         })
 
-def recommend_songs_from_track_id(track_id, df_pca, df_clean, n_recommendations=5):
+def recommend_songs_from_track_id(track_id: str, df_pca: pd.DataFrame, 
+                                 df_clean: pd.DataFrame, 
+                                 n_recommendations: int = 5) -> pd.DataFrame:
     """
     Recommend songs based on a track ID that's already in our database
+    
+    Args:
+        track_id: Spotify track ID
+        df_pca: DataFrame with PCA features and cluster assignments
+        df_clean: DataFrame with song metadata
+        n_recommendations: Number of recommendations to return
+        
+    Returns:
+        DataFrame with recommended songs
     """
     try:
         if track_id not in df_pca.index:
@@ -455,9 +505,18 @@ def recommend_songs_from_track_id(track_id, df_pca, df_clean, n_recommendations=
         print(f"Error recommending songs: {e}")
         return get_random_recommendations(df_clean, n_recommendations)
 
-def recommend_from_name(song_name, artist_name=None, n_recommendations=5):
+def recommend_from_name(song_name: str, artist_name: Optional[str] = None, 
+                       n_recommendations: int = 5) -> pd.DataFrame:
     """
     Main function to recommend songs based on a song name
+    
+    Args:
+        song_name: Name of the song to find recommendations for
+        artist_name: Optional artist name for better matching
+        n_recommendations: Number of recommendations to return
+        
+    Returns:
+        DataFrame with recommended songs
     """
     try:
         # Load components
@@ -507,10 +566,23 @@ def recommend_from_name(song_name, artist_name=None, n_recommendations=5):
             'popularity': [0]
         })
 
-def manual_selection_fallback(df_pca, df_clean, song_name=None, artist_name=None, n_recommendations=5):
+def manual_selection_fallback(df_pca: pd.DataFrame, df_clean: pd.DataFrame, 
+                             song_name: Optional[str] = None, 
+                             artist_name: Optional[str] = None, 
+                             n_recommendations: int = 5) -> pd.DataFrame:
     """
     Fallback mechanism when Spotify API fails -
     tries to find a similar song in our existing dataset
+    
+    Args:
+        df_pca: DataFrame with PCA features and cluster assignments
+        df_clean: DataFrame with song metadata
+        song_name: Optional song name to search for
+        artist_name: Optional artist name to search for
+        n_recommendations: Number of recommendations to return
+        
+    Returns:
+        DataFrame with recommended songs
     """
     try:
         # Try to find a similar song in our dataset based on name/artist
@@ -566,10 +638,16 @@ def manual_selection_fallback(df_pca, df_clean, song_name=None, artist_name=None
         return get_random_recommendations(df_clean, n_recommendations)
 
 # Manual Testing Function (fallback when Spotify API is unavailable)
-def manual_testing(song_name=None):
+def manual_testing(song_name: Optional[str] = None) -> pd.DataFrame:
     """
     Test recommendation functionality using a random song from our dataset
     (This doesn't require Spotify API)
+    
+    Args:
+        song_name: Optional song name (not used, kept for API compatibility)
+        
+    Returns:
+        DataFrame with recommended songs
     """
     try:
         # Load components
