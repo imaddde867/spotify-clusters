@@ -71,15 +71,19 @@
                             <div class="input-field">
                                 <label for="songName">Song name *</label>
                                 <input type="text" id="songName" name="song_name"
-                                       placeholder="e.g., Bohemian Rhapsody" required>
-                                <div class="input-hint">Enter any song title</div>
+                                       placeholder="e.g., Bohemian Rhapsody" required
+                                       aria-describedby="songNameHint" minlength="2" maxlength="100"
+                                       autocomplete="off" spellcheck="false">
+                                <div class="input-hint" id="songNameHint">Enter any song title (minimum 2 characters)</div>
                             </div>
 
                             <div class="input-field">
                                 <label for="artistName">Artist (optional)</label>
                                 <input type="text" id="artistName" name="artist_name"
-                                       placeholder="e.g., Queen">
-                                <div class="input-hint">For better accuracy</div>
+                                       placeholder="e.g., Queen"
+                                       aria-describedby="artistNameHint" maxlength="100"
+                                       autocomplete="off" spellcheck="false">
+                                <div class="input-hint" id="artistNameHint">For better accuracy (leave blank to search all artists)</div>
                             </div>
                         </div>
 
@@ -94,11 +98,13 @@
                                 </select>
                             </div>
 
-                            <button type="submit" class="generate-btn" id="submitBtn">
+                            <button type="submit" class="generate-btn" id="submitBtn"
+                                    aria-describedby="submitBtnHelp">
                                 <span class="btn-text">Find Similar Songs</span>
-                                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M8 5v14l11-7z"/>
                                 </svg>
+                                <span class="sr-only" id="submitBtnHelp">Generate AI-powered music recommendations</span>
                             </button>
                         </div>
                     </form>
@@ -106,15 +112,22 @@
             </section>
 
             <!-- Loading State -->
-            <div id="loadingIndicator" class="loading-section" style="display: none;">
+            <div id="loadingIndicator" class="loading-section" style="display: none;"
+                 role="status" aria-live="polite" aria-label="Loading recommendations">
                 <div class="loading-content">
-                    <div class="loading-spinner"></div>
+                    <div class="loading-spinner" aria-hidden="true"></div>
                     <h3 class="loading-title">Finding similar songs...</h3>
                     <p class="loading-description">Our AI is analyzing musical patterns to find your perfect matches</p>
-                    <div class="loading-steps">
-                        <div class="step active" id="step1">🔍 Searching music library</div>
-                        <div class="step" id="step2">🧠 Analyzing patterns</div>
-                        <div class="step" id="step3">🎵 Curating recommendations</div>
+                    <div class="loading-steps" aria-label="Progress steps">
+                        <div class="step active" id="step1" role="progressbar" aria-valuenow="1" aria-valuemax="3">
+                            <span aria-hidden="true">🔍</span> Searching music library
+                        </div>
+                        <div class="step" id="step2" role="progressbar" aria-valuenow="0" aria-valuemax="3">
+                            <span aria-hidden="true">🧠</span> Analyzing patterns
+                        </div>
+                        <div class="step" id="step3" role="progressbar" aria-valuenow="0" aria-valuemax="3">
+                            <span aria-hidden="true">🎵</span> Curating recommendations
+                        </div>
                     </div>
                 </div>
             </div>

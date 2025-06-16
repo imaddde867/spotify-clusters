@@ -1,12 +1,14 @@
-/* Modern Spotify AI Recommendations - Clean Design with Dark Mode */
+/* Modern Spotify AI Recommendations - Enhanced UX Design with Dark Mode */
 
 :root {
     --primary: #1db954;
     --primary-dark: #1aa34a;
     --primary-light: #1ed760;
+    --primary-hover: #1ed760;
     --secondary: #191414;
     --background: #fafafa;
     --surface: #ffffff;
+    --surface-elevated: #ffffff;
     --text-primary: #191414;
     --text-secondary: #6b7280;
     --text-muted: #9ca3af;
@@ -14,16 +16,23 @@
     --border-light: #f3f4f6;
     --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --radius: 16px;
     --radius-sm: 8px;
+    --radius-lg: 20px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
 }
 
 /* Dark Mode Variables */
 [data-theme="dark"] {
     --background: #0d1117;
     --surface: #161b22;
+    --surface-elevated: #21262d;
     --text-primary: #f0f6fc;
     --text-secondary: #8b949e;
     --text-muted: #6e7681;
@@ -31,6 +40,7 @@
     --border-light: #21262d;
     --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -332,6 +342,23 @@ body {
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+/* Input validation states */
+.input-field input:invalid:not(:placeholder-shown) {
+    border-color: var(--warning);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.input-field input:valid:not(:placeholder-shown) {
+    border-color: var(--success);
+}
+
+/* Input clear button styles */
+.input-clear-btn:hover {
+    background: var(--border-light);
+    color: var(--text-secondary);
 }
 
 .controls-group {
@@ -380,7 +407,7 @@ body {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1.5rem;
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
     color: white;
     border: none;
     border-radius: var(--radius-sm);
@@ -388,20 +415,44 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.generate-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.generate-btn:hover::before {
+    left: 100%;
 }
 
 .generate-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .generate-btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 .generate-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    transform: none;
+}
+
+.generate-btn:disabled::before {
+    display: none;
 }
 
 .btn-icon {
@@ -568,11 +619,31 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.track-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--primary);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
 }
 
 .track-item:hover {
     transform: translateX(4px);
     border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    background: var(--surface-elevated);
+}
+
+.track-item:hover::before {
+    transform: scaleY(1);
 }
 
 .track-number {
@@ -691,7 +762,7 @@ body {
     font-size: 0.875rem;
 }
 
-/* Animations */
+/* Enhanced Animations */
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -701,7 +772,7 @@ body {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -709,8 +780,52 @@ body {
     }
 }
 
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
 .fade-in {
-    animation: fadeInUp 0.5s ease-out;
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-in {
+    animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Loading skeleton animation */
+.skeleton {
+    background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
 }
 
 /* Responsive Design */
@@ -866,12 +981,96 @@ body {
     }
 }
 
+/* Enhanced Error States */
+.error-section {
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.error-content {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--error);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+}
+
+.error-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--error);
+    margin: 0 auto 1rem;
+}
+
+.error-text h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.error-text p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.retry-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.retry-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Enhanced Loading States */
+.loading-examples {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+.loading-examples .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top: 2px solid var(--primary);
+}
+
+/* Success States */
+.success-indicator {
+    color: var(--success);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
 /* Focus Styles */
 button:focus,
 input:focus,
 select:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.3);
 }
 
 /* Loading Animation */
@@ -882,4 +1081,29 @@ select:focus {
 /* Smooth Scrolling */
 html {
     scroll-behavior: smooth;
+}
+
+/* Enhanced Accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
