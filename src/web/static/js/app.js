@@ -23,12 +23,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeEventListeners() {
         // Theme toggle handler
         themeToggle.addEventListener('click', toggleTheme);
-        
+
         // Keyboard shortcuts
         initializeKeyboardShortcuts();
-        
+
         // Accessibility improvements
         initializeAccessibility();
+
+        // Enhanced form interactions
+        initializeFormEnhancements();
+
+        // Auto-save form state
+        initializeFormPersistence();
     }
 
     // Form submission handler
@@ -44,9 +50,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 playlist_size: parseInt(formData.get('playlist_size'))
             };
 
-            // Validate input
+            // Enhanced validation
             if (!data.song_name) {
-                showError('Please enter a song name to get started');
+                showError('Please enter a song name to get started', 'validation');
+                focusFirstError();
+                return;
+            }
+
+            // Validate song name length
+            if (data.song_name.length < 2) {
+                showError('Song name must be at least 2 characters long', 'validation');
+                focusFirstError();
                 return;
             }
 
@@ -55,6 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
             showLoading();
             hideError();
             hideResults();
+
+            // Save search to history
+            saveSearchToHistory(data);
 
             // Make API request with timeout
             const controller = new AbortController();
@@ -82,8 +99,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     showResults(result);
                     // Log successful search for analytics
                     console.log(`Search successful: ${data.song_name} by ${data.artist_name || 'unknown'}`);
+
+                    // Show success feedback
+                    showSuccessIndicator(`Found ${result.recommendations.length} recommendations!`);
                 } else {
-                    showError(result.error || 'Unable to find recommendations for this song. Try a different track or check the spelling.');
+                    showError(result.error || 'Unable to find recommendations for this song. Try a different track or check the spelling.', 'api', {
+                        suggestions: [
+                            'Check the spelling of the song name',
+                            'Try searching without the artist name',
+                            'Use a more popular song title'
+                        ]
+                    });
                 }
             } catch (fetchError) {
                 console.error('Fetch error:', fetchError);
@@ -711,5 +737,205 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Auto-focus on song name input
         document.getElementById('songName').focus();
+    }
+
+    /**
+     * Enhanced form interactions
+     */
+    function initializeFormEnhancements() {
+        const songInput = document.getElementById('songName');
+        const artistInput = document.getElementById('artistName');
+
+        // Real-time validation feedback
+        songInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length > 0 && value.length < 2) {
+                this.style.borderColor = 'var(--warning)';
+            } else {
+                this.style.borderColor = '';
+            }
+        });
+
+        // Auto-capitalize first letters
+        [songInput, artistInput].forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value) {
+                    this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+                }
+            });
+        });
+
+        // Clear button for inputs
+        [songInput, artistInput].forEach(input => {
+            const clearBtn = document.createElement('button');
+            clearBtn.type = 'button';
+            clearBtn.innerHTML = '×';
+            clearBtn.className = 'input-clear-btn';
+            clearBtn.style.cssText = `
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                font-size: 18px;
+                color: var(--text-muted);
+                cursor: pointer;
+                display: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                transition: var(--transition-fast);
+            `;
+
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                input.focus();
+                clearBtn.style.display = 'none';
+            });
+
+            input.parentElement.style.position = 'relative';
+            input.parentElement.appendChild(clearBtn);
+
+            input.addEventListener('input', () => {
+                clearBtn.style.display = input.value ? 'block' : 'none';
+            });
+        });
+    }
+
+    /**
+     * Form state persistence
+     */
+    function initializeFormPersistence() {
+        const songInput = document.getElementById('songName');
+        const artistInput = document.getElementById('artistName');
+        const playlistSize = document.getElementById('playlistSize');
+
+        // Load saved form state
+        const savedState = localStorage.getItem('spotify-ai-form-state');
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                if (state.song_name) songInput.value = state.song_name;
+                if (state.artist_name) artistInput.value = state.artist_name;
+                if (state.playlist_size) playlistSize.value = state.playlist_size;
+            } catch (e) {
+                console.warn('Failed to load saved form state:', e);
+            }
+        }
+
+        // Save form state on change
+        function saveFormState() {
+            const state = {
+                song_name: songInput.value,
+                artist_name: artistInput.value,
+                playlist_size: playlistSize.value
+            };
+            localStorage.setItem('spotify-ai-form-state', JSON.stringify(state));
+        }
+
+        [songInput, artistInput, playlistSize].forEach(input => {
+            input.addEventListener('input', saveFormState);
+        });
+    }
+
+    /**
+     * Enhanced error handling with suggestions
+     */
+    function showError(message, type = 'general', options = {}) {
+        const errorMessageEl = document.getElementById('errorMessage');
+
+        let errorHtml = `<strong>${message}</strong>`;
+
+        if (options.suggestions && options.suggestions.length > 0) {
+            errorHtml += '<div style="margin-top: 1rem;"><strong>Try these suggestions:</strong><ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">';
+            options.suggestions.forEach(suggestion => {
+                errorHtml += `<li style="margin: 0.25rem 0;">${suggestion}</li>`;
+            });
+            errorHtml += '</ul></div>';
+        }
+
+        errorMessageEl.innerHTML = errorHtml;
+        errorAlert.style.display = 'block';
+        errorAlert.classList.add('fade-in');
+        errorAlert.setAttribute('role', 'alert');
+        errorAlert.setAttribute('aria-live', 'assertive');
+
+        // Scroll to error
+        errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Log error for analytics
+        console.error(`User-facing error (${type}):`, message);
+    }
+
+    /**
+     * Focus management for errors
+     */
+    function focusFirstError() {
+        const songInput = document.getElementById('songName');
+        songInput.focus();
+        songInput.select();
+    }
+
+    /**
+     * Success indicator
+     */
+    function showSuccessIndicator(message) {
+        // Create temporary success message
+        const successEl = document.createElement('div');
+        successEl.className = 'success-indicator fade-in';
+        successEl.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            ${message}
+        `;
+        successEl.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            font-size: 0.875rem;
+            font-weight: 500;
+        `;
+
+        document.body.appendChild(successEl);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            successEl.style.opacity = '0';
+            successEl.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (successEl.parentNode) {
+                    successEl.parentNode.removeChild(successEl);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    /**
+     * Search history management
+     */
+    function saveSearchToHistory(searchData) {
+        try {
+            const history = JSON.parse(localStorage.getItem('spotify-ai-search-history') || '[]');
+            const newSearch = {
+                ...searchData,
+                timestamp: Date.now()
+            };
+
+            // Add to beginning and limit to 10 items
+            history.unshift(newSearch);
+            const limitedHistory = history.slice(0, 10);
+
+            localStorage.setItem('spotify-ai-search-history', JSON.stringify(limitedHistory));
+        } catch (e) {
+            console.warn('Failed to save search to history:', e);
+        }
     }
 });
