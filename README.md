@@ -181,6 +181,17 @@ Retrieve popular song examples for the interface
 #### GET `/health`
 System health check endpoint
 
+## Application Screenshots
+
+### User Interface
+![Application Interface](docs/interface.png)
+
+### Search Functionality
+![Search Interface](docs/search.png)
+
+### Recommendation Results
+![Search Results](docs/result.png)
+
 ## Model Performance Metrics
 
 | Metric | Value | Description |
