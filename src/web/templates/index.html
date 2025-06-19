@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify AI - Discover Your Next Favorite Song</title>
-    <meta name="description" content="AI-powered music recommendations using advanced machine learning">
+    <meta name="description" content="AI-driven recommendation engine analyzes 11 core audio features across 1.1 million tracks, leveraging PCA (preserving 92% variance) and 35 optimized clusters with cosine similarity to deliver precise song recommendations.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
@@ -30,7 +30,7 @@
                     </button>
                 </div>
                 <div class="header-subtitle">
-                    Discover your next favorite song with AI
+                    Precision music recommendations crafted with advanced machine learning
                 </div>
             </div>
         </header>
@@ -40,8 +40,7 @@
             <div class="welcome-content">
                 <h2 class="welcome-title">🎵 Discover Music That Moves You</h2>
                 <p class="welcome-description">
-                    Enter any song and let our AI find similar tracks you'll love.
-                    Powered by machine learning analysis of over 1 million songs.
+                    Ever spent hours searching for that perfect track that resonates like your favorite? Our AI-driven engine deconstructs songs across 11 core audio features—including energy, danceability, and acousticness—analyzing over 1.1 million tracks. By applying PCA to preserve 92% of the variance and organizing songs into 35 optimized clusters, we use cosine similarity to identify exceptional matches with remarkable precision.
                 </p>
                 <div class="demo-suggestions">
                     <h3>Popular starting points:</h3>
@@ -63,7 +62,9 @@
                 <div class="search-container">
                     <div class="search-header">
                         <h2 class="search-title">Find your next favorite song</h2>
-                        <p class="search-subtitle">Enter any song and let our AI find similar tracks you'll love</p>
+                        <p class="search-subtitle">
+                            Provide any song title to receive curated recommendations powered by in-depth audio analysis
+                        </p>
                     </div>
 
                     <form id="recommendationForm" class="search-form">
