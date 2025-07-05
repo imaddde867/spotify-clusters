@@ -33,14 +33,14 @@ API_RATE_LIMIT_PAUSE = 0.5
 def load_song_cache() -> Dict[str, Dict[str, Any]]:
     """
     Load the song features cache from disk.
-    
+
     The cache stores previously fetched Spotify API responses to avoid
     redundant API calls and improve performance.
-    
+
     Returns:
         Dictionary mapping song keys to cached song data and features.
         Returns empty dict if cache file doesn't exist or cannot be loaded.
-        
+
     Note:
         Cache file location is defined by CACHE_PATH constant.
         Handles file corruption gracefully by returning empty cache.
@@ -58,11 +58,11 @@ def load_song_cache() -> Dict[str, Dict[str, Any]]:
 def save_to_cache(song_key: str, song_data: Dict[str, Any]) -> None:
     """
     Save song data to persistent cache.
-    
+
     Args:
         song_key: Unique identifier for the song (usually "song_name - artist_name")
         song_data: Dictionary containing song metadata and audio features
-        
+
     Note:
         Updates the existing cache file or creates new one if it doesn't exist.
         Handles write errors gracefully by logging and continuing execution.
@@ -85,25 +85,25 @@ def load_components() -> (
 ):
     """
     Load all required ML components and data from disk.
-    
+
     This function loads the pre-trained machine learning models, scalers,
     transformed datasets, and feature lists that are used for music
     recommendation. All components must be available for the system to work.
-    
+
     Returns:
         Tuple containing:
             - kmeans: Trained K-means clustering model
-            - pca: Fitted PCA transformer for dimensionality reduction  
+            - pca: Fitted PCA transformer for dimensionality reduction
             - scaler_opt: StandardScaler for normalizing audio features
             - scaler_tempo: MinMaxScaler specifically for tempo normalization
             - df_pca: DataFrame with PCA-transformed track features
             - df_clean: DataFrame with original clean track data and metadata
             - top_features: List of most important feature names for ML pipeline
-            
+
     Raises:
         FileNotFoundError: If any required model files are missing
         Exception: If models cannot be loaded due to corruption or version issues
-        
+
     Note:
         All model files must be present in the 'models' subdirectory.
         The dataframes are automatically aligned to ensure consistency.

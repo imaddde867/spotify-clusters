@@ -199,48 +199,67 @@ def recommend() -> Response:
         # Input validation and sanitization
         song_name = data.get("song_name", "").strip()
         artist_name = data.get("artist_name", "").strip()
-        
+
         # Validate playlist size with proper type checking
         try:
             playlist_size = int(data.get("playlist_size", 5))
         except (ValueError, TypeError):
-            return jsonify({
-                "success": False, 
-                "error": "playlist_size must be a valid number"
-            }), 400
+            return (
+                jsonify(
+                    {"success": False, "error": "playlist_size must be a valid number"}
+                ),
+                400,
+            )
 
         # Security: Validate input lengths to prevent abuse
         if len(song_name) > 200:
-            return jsonify({
-                "success": False, 
-                "error": "Song name too long (max 200 characters)"
-            }), 400
-            
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Song name too long (max 200 characters)",
+                    }
+                ),
+                400,
+            )
+
         if len(artist_name) > 200:
-            return jsonify({
-                "success": False, 
-                "error": "Artist name too long (max 200 characters)"
-            }), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Artist name too long (max 200 characters)",
+                    }
+                ),
+                400,
+            )
 
         # Basic input validation
         if not song_name:
-            return jsonify({
-                "success": False, 
-                "error": "Please enter a song name"
-            }), 400
-            
+            return jsonify({"success": False, "error": "Please enter a song name"}), 400
+
         if len(song_name) < 2:
-            return jsonify({
-                "success": False, 
-                "error": "Song name must be at least 2 characters long"
-            }), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Song name must be at least 2 characters long",
+                    }
+                ),
+                400,
+            )
 
         # Ensure playlist size is within reasonable bounds
         if playlist_size < 1 or playlist_size > 20:
-            return jsonify({
-                "success": False, 
-                "error": "playlist_size must be between 1 and 20"
-            }), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "playlist_size must be between 1 and 20",
+                    }
+                ),
+                400,
+            )
 
         # Ensure ML components are loaded
         if not components_loaded:

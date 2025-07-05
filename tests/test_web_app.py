@@ -13,7 +13,12 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # Import after path setup
-from web.app import app, check_model_files, get_popular_examples, load_ml_components
+from web.app import (  # noqa: E402
+    app,
+    check_model_files,
+    get_popular_examples,
+    load_ml_components,
+)
 
 
 class TestWebApp:
@@ -29,14 +34,19 @@ class TestWebApp:
     @pytest.fixture
     def mock_components_loaded(self):
         """Mock ML components as loaded."""
-        with patch("web.app.components_loaded", True), \
-             patch("web.app.kmeans", MagicMock()), \
-             patch("web.app.pca", MagicMock()), \
-             patch("web.app.scaler_opt", MagicMock()), \
-             patch("web.app.scaler_tempo", MagicMock()), \
-             patch("web.app.df_pca", MagicMock()), \
-             patch("web.app.df_clean", MagicMock()), \
-             patch("web.app.top_features", ["feature1", "feature2"]):
+        with patch("web.app.components_loaded", True), patch(
+            "web.app.kmeans", MagicMock()
+        ), patch("web.app.pca", MagicMock()), patch(
+            "web.app.scaler_opt", MagicMock()
+        ), patch(
+            "web.app.scaler_tempo", MagicMock()
+        ), patch(
+            "web.app.df_pca", MagicMock()
+        ), patch(
+            "web.app.df_clean", MagicMock()
+        ), patch(
+            "web.app.top_features", ["feature1", "feature2"]
+        ):
             yield
 
     def test_index_route(self, client):
@@ -81,28 +91,31 @@ class TestWebApp:
     def test_recommend_without_components(self, mock_load_ml, client):
         """Test recommendation endpoint without loaded components."""
         mock_load_ml.return_value = (False, "Components not loaded")
-        
-        response = client.post("/recommend", 
-                             data=json.dumps({
-                                 "song_name": "Test Song",
-                                 "artist_name": "Test Artist",
-                                 "playlist_size": 10
-                             }),
-                             content_type="application/json")
-        
+
+        response = client.post(
+            "/recommend",
+            data=json.dumps(
+                {
+                    "song_name": "Test Song",
+                    "artist_name": "Test Artist",
+                    "playlist_size": 10,
+                }
+            ),
+            content_type="application/json",
+        )
+
         assert response.status_code == 500
         data = json.loads(response.data)
         assert data["success"] is False
 
     def test_recommend_missing_song_name(self, client, mock_components_loaded):
         """Test recommendation endpoint with missing song name."""
-        response = client.post("/recommend", 
-                             data=json.dumps({
-                                 "artist_name": "Test Artist",
-                                 "playlist_size": 10
-                             }),
-                             content_type="application/json")
-        
+        response = client.post(
+            "/recommend",
+            data=json.dumps({"artist_name": "Test Artist", "playlist_size": 10}),
+            content_type="application/json",
+        )
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert data["success"] is False
@@ -110,13 +123,12 @@ class TestWebApp:
 
     def test_recommend_invalid_playlist_size(self, client, mock_components_loaded):
         """Test recommendation endpoint with invalid playlist size."""
-        response = client.post("/recommend", 
-                             data=json.dumps({
-                                 "song_name": "Test Song",
-                                 "playlist_size": 0
-                             }),
-                             content_type="application/json")
-        
+        response = client.post(
+            "/recommend",
+            data=json.dumps({"song_name": "Test Song", "playlist_size": 0}),
+            content_type="application/json",
+        )
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert data["success"] is False
@@ -124,13 +136,12 @@ class TestWebApp:
 
     def test_recommend_playlist_size_too_large(self, client, mock_components_loaded):
         """Test recommendation endpoint with playlist size too large."""
-        response = client.post("/recommend", 
-                             data=json.dumps({
-                                 "song_name": "Test Song",
-                                 "playlist_size": 100
-                             }),
-                             content_type="application/json")
-        
+        response = client.post(
+            "/recommend",
+            data=json.dumps({"song_name": "Test Song", "playlist_size": 100}),
+            content_type="application/json",
+        )
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert data["success"] is False
@@ -145,10 +156,10 @@ class TestUtilityFunctions:
         """Test model file check when all files exist."""
         mock_models_dir = MagicMock()
         mock_parent_dir.__truediv__.return_value = mock_models_dir
-        
+
         # Mock all files exist
         mock_models_dir.__truediv__.return_value.exists.return_value = True
-        
+
         success, missing = check_model_files()
         assert success is True
         assert missing == []
@@ -158,13 +169,13 @@ class TestUtilityFunctions:
         """Test model file check when some files are missing."""
         mock_models_dir = MagicMock()
         mock_parent_dir.__truediv__.return_value = mock_models_dir
-        
+
         # Mock some files missing
         def mock_exists(file_path):
             return "kmeans_model.pkl" not in str(file_path)
-        
+
         mock_models_dir.__truediv__.return_value.exists.side_effect = mock_exists
-        
+
         success, missing = check_model_files()
         assert success is False
         assert "kmeans_model.pkl" in missing
@@ -192,10 +203,15 @@ class TestUtilityFunctions:
         """Test successful ML component loading."""
         mock_check_files.return_value = (True, [])
         mock_load_components.return_value = (
-            MagicMock(), MagicMock(), MagicMock(), MagicMock(),
-            MagicMock(), MagicMock(), ["feature1", "feature2"]
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            ["feature1", "feature2"],
         )
-        
+
         success, error = load_ml_components()
         assert success is True
         assert error is None
@@ -204,18 +220,20 @@ class TestUtilityFunctions:
     def test_load_ml_components_missing_files(self, mock_check_files):
         """Test ML component loading with missing files."""
         mock_check_files.return_value = (False, ["missing_file.pkl"])
-        
+
         success, error = load_ml_components()
         assert success is False
         assert "missing_file.pkl" in error
 
     @patch("web.app.check_model_files")
     @patch("web.app.load_components")
-    def test_load_ml_components_import_error(self, mock_load_components, mock_check_files):
+    def test_load_ml_components_import_error(
+        self, mock_load_components, mock_check_files
+    ):
         """Test ML component loading with import error."""
         mock_check_files.return_value = (True, [])
         mock_load_components.side_effect = ImportError("Module not found")
-        
+
         success, error = load_ml_components()
         assert success is False
         assert "Import error" in error
@@ -226,17 +244,16 @@ class TestRequestValidation:
 
     def test_json_parsing_error(self, client):
         """Test handling of invalid JSON."""
-        response = client.post("/recommend", 
-                             data="invalid json",
-                             content_type="application/json")
-        
+        response = client.post(
+            "/recommend", data="invalid json", content_type="application/json"
+        )
+
         assert response.status_code == 400
 
     def test_missing_content_type(self, client):
         """Test request without proper content type."""
-        response = client.post("/recommend", 
-                             data=json.dumps({"song_name": "Test"}))
-        
+        response = client.post("/recommend", data=json.dumps({"song_name": "Test"}))
+
         # Should still work or return appropriate error
         assert response.status_code in [200, 400, 500]
 
