@@ -326,6 +326,31 @@ cat .env
 # Consider reducing dataset size for development
 ```
 
+## Development and Contribution
+
+For developers working on this project, see the [Development Guide](DEVELOPMENT.md) which includes:
+
+- 🛠️ **Development Environment Setup** with enhanced tools
+- ✅ **Code Quality Standards** (Black, flake8, isort, mypy)
+- 🧪 **Testing Framework** with pytest and coverage reporting
+- 📊 **Performance Monitoring** and logging utilities
+- 🚀 **Development Server** with auto-reload and debugging
+- 📝 **Contribution Guidelines** and best practices
+
+### Quick Development Start
+
+```bash
+# Install development dependencies
+pip install -r requirements.txt
+pip install black isort flake8 pytest pytest-cov mypy
+
+# Run quality checks
+python scripts/dev/quality_check.py --fix
+
+# Start development server
+python scripts/dev/dev_server.py
+```
+
 ## License and Attribution
 
 This project is developed for educational and research purposes. The Spotify dataset is used under fair use for academic research. Spotify API integration requires compliance with Spotify's Terms of Service.
@@ -336,6 +361,9 @@ This project is developed for educational and research purposes. The Spotify dat
 - **Framework**: Flask 2.0+
 - **ML Libraries**: scikit-learn, pandas, numpy
 - **API Integration**: spotipy
+- **Testing**: pytest, pytest-cov, pytest-flask
+- **Code Quality**: black, isort, flake8, mypy
+- **Monitoring**: psutil, custom performance tools
 - **Frontend**: Vanilla JavaScript, CSS3, HTML5
 - **Deployment**: Gunicorn-ready, Docker-compatible
 

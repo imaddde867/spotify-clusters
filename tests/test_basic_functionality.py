@@ -5,7 +5,6 @@ Basic unit tests for the Flask web application.
 import json
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -13,7 +12,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # Import after path setup
-from web.app import get_popular_examples
+from web.app import get_popular_examples  # noqa: E402
 
 
 class TestBasicFunctionality:
@@ -55,6 +54,7 @@ class TestWebAppRoutes:
     def client(self):
         """Create test client."""
         from web.app import app
+
         app.config["TESTING"] = True
         with app.test_client() as client:
             yield client
@@ -92,14 +92,18 @@ class TestWebAppRoutes:
 
     def test_recommend_endpoint_exists(self, client):
         """Test that recommend endpoint exists (may fail without models)."""
-        response = client.post("/recommend", 
-                             data=json.dumps({
-                                 "song_name": "Test Song",
-                                 "artist_name": "Test Artist",
-                                 "playlist_size": 10
-                             }),
-                             content_type="application/json")
-        
+        response = client.post(
+            "/recommend",
+            data=json.dumps(
+                {
+                    "song_name": "Test Song",
+                    "artist_name": "Test Artist",
+                    "playlist_size": 10,
+                }
+            ),
+            content_type="application/json",
+        )
+
         # Endpoint should exist (may return error due to missing models)
         assert response.status_code in [200, 400, 500]
 
