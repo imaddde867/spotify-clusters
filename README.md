@@ -4,27 +4,27 @@ An advanced machine learning-powered music recommendation engine that leverages 
 
 ## Overview
 
-This system implements a sophisticated recommendation engine using Principal Component Analysis (PCA) and K-means clustering on a dataset of over 1.1 million Spotify tracks. The application provides intelligent music recommendations based on audio feature similarity, with both API-driven and dataset-based recommendation modes.
+This system implements a recommendation engine using Principal Component Analysis (PCA) and K-means clustering on a dataset of over 1.1 million Spotify tracks. The application provides music recommendations based on audio feature similarity, with both API-driven and dataset-based recommendation modes.
 
 ## Key Features
 
 ### Machine Learning Architecture
 - **Dimensionality Reduction**: PCA implementation for feature optimization and noise reduction
-- **Clustering Algorithm**: K-means clustering with 35 optimized clusters for music categorization
-- **Feature Engineering**: Advanced audio feature processing including energy-to-acousticness ratios and vocal character analysis
-- **Similarity Computation**: Cosine similarity calculations for precise track matching
+- **Clustering Algorithm**: K-means clustering with 35 clusters for music categorization
+- **Feature Engineering**: Audio feature processing including energy-to-acousticness ratios and vocal character analysis
+- **Similarity Computation**: Cosine similarity calculations for track matching
 
-### Production-Ready Web Application
-- **Flask-based REST API**: Scalable web service with comprehensive error handling
+### Web Application
+- **Flask-based REST API**: Flask web service with error handling
 - **Responsive Frontend**: Modern web interface with dark mode support and accessibility features
-- **Real-time Processing**: Sub-second recommendation generation using pre-trained models
-- **Fallback Systems**: Multiple recommendation strategies ensuring consistent service availability
+- **Real-time Processing**: Recommendations generated from pre-trained models
+- **Fallback Systems**: Fallback recommendation strategies when the primary path fails
 
 ### Data Processing Pipeline
-- **Large-scale Dataset**: 1,159,764 Spotify tracks with comprehensive audio features
+- **Dataset**: 1,159,764 Spotify tracks with audio features
 - **Feature Selection**: 11 core audio features plus engineered composite features
-- **Data Validation**: Robust preprocessing with missing value handling and outlier detection
-- **Model Persistence**: Optimized model serialization for production deployment
+- **Data Validation**: Preprocessing with missing value handling and outlier detection
+- **Model Persistence**: Model serialization so the trained models can be reloaded
 
 ## Technical Architecture
 
@@ -124,7 +124,7 @@ python src/web/app.py
 ./run.sh
 ```
 
-### Production Deployment
+### Running with Gunicorn
 ```bash
 # Using Gunicorn (recommended)
 gunicorn --bind 0.0.0.0:5000 --workers 4 src.web.app:app
@@ -197,9 +197,8 @@ System health check endpoint
 | Metric | Value | Description |
 |--------|-------|-------------|
 | **Variance Preserved** | 91.99% | PCA dimensionality reduction efficiency |
-| **Cluster Count** | 35 | Optimized K-means cluster configuration |
-| **Dataset Coverage** | 1,159,764 tracks | Comprehensive music library |
-| **Response Time** | <500ms | Average recommendation generation time |
+| **Cluster Count** | 35 | Number of K-means clusters |
+| **Dataset Coverage** | 1,159,764 tracks | Tracks in the dataset |
 | **Memory Usage** | ~2GB | Model loading and operation requirements |
 
 ## System Architecture
@@ -341,4 +340,4 @@ This project is developed for educational and research purposes. The Spotify dat
 
 ---
 
-**Project Status**: Production Ready | **Maintained**: Active Development
+**Project Status**: Prototype, educational project
