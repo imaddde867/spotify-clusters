@@ -1,6 +1,6 @@
 # Spotify AI Music Recommendation System
 
-An advanced machine learning-powered music recommendation engine that leverages audio feature analysis and unsupervised clustering algorithms to deliver personalized music suggestions. Built with production-grade architecture and comprehensive fallback mechanisms.
+A music recommendation prototype: PCA and K-means clustering on Spotify audio features, with a small Flask API and web front end.
 
 ## Overview
 
@@ -17,7 +17,7 @@ This system implements a recommendation engine using Principal Component Analysi
 ### Web Application
 - **Flask-based REST API**: Flask web service with error handling
 - **Responsive Frontend**: Modern web interface with dark mode support and accessibility features
-- **Real-time Processing**: Recommendations generated from pre-trained models
+- **Pre-trained Models**: Recommendations generated from pre-trained models
 - **Fallback Systems**: Fallback recommendation strategies when the primary path fails
 
 ### Data Processing Pipeline
